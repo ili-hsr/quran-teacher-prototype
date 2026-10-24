@@ -1,9 +1,7 @@
-
 package org.example.quranteacher;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.Gravity;
@@ -14,12 +12,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.Locale;
-
 public class MainActivity extends Activity {
-
-    private TextToSpeech tts;
-    private boolean ttsReady = false;
 
     private final int backgroundColor = Color.rgb(250, 248, 241);
     private final int greenColor = Color.rgb(105, 139, 104);
@@ -29,16 +22,10 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getWindow().getDecorView().setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
-        getWindow().getDecorView().setBackgroundColor(backgroundColor);
+        getWindow().getDecorView().setLayoutDirection(
+                View.LAYOUT_DIRECTION_RTL);
 
-        tts = new TextToSpeech(this, status -> {
-            if (status == TextToSpeech.SUCCESS) {
-                int result = tts.setLanguage(new Locale("ar"));
-                ttsReady = result != TextToSpeech.LANG_MISSING_DATA
-                        && result != TextToSpeech.LANG_NOT_SUPPORTED;
-            }
-        });
+        getWindow().getDecorView().setBackgroundColor(backgroundColor);
 
         showHome();
     }
@@ -50,7 +37,11 @@ public class MainActivity extends Activity {
         view.setTextColor(textColor);
         view.setGravity(Gravity.CENTER);
         view.setPadding(16, 16, 16, 16);
-        if (bold) view.setTypeface(null, Typeface.BOLD);
+
+        if (bold) {
+            view.setTypeface(null, Typeface.BOLD);
+        }
+
         return view;
     }
 
@@ -63,6 +54,7 @@ public class MainActivity extends Activity {
         button.setBackgroundTintList(
                 android.content.res.ColorStateList.valueOf(greenColor));
         button.setPadding(18, 18, 18, 18);
+
         return button;
     }
 
@@ -72,21 +64,23 @@ public class MainActivity extends Activity {
         layout.setGravity(Gravity.CENTER_HORIZONTAL);
         layout.setPadding(24, 24, 24, 24);
         layout.setBackgroundColor(backgroundColor);
+
         return layout;
     }
 
     private void showHome() {
         LinearLayout layout = createLayout();
 
-        TextView title = makeText("مُعَلِّمُ القُرْآن", 30, true);
-        layout.addView(title);
+        layout.addView(makeText("مُعَلِّمُ القُرْآن", 30, true));
 
         layout.addView(makeText(
                 "مرحباً بكِ\nلنتعلّم القرآن معاً", 22, false));
 
         Button voiceButton = makeButton("🔊 اختبار الصوت");
-        voiceButton.setOnClickListener(v -> speak(
-                "السلام عليكم. مرحباً بك في معلم القرآن."));
+        voiceButton.setOnClickListener(v ->
+                Toast.makeText(this,
+                        "سن rétablir la voix arabe après le test.",
+                        Toast.LENGTH_LONG).show());
         layout.addView(voiceButton, buttonParams());
 
         Button lessonButton = makeButton("📖 درس القرآن");
@@ -113,13 +107,16 @@ public class MainActivity extends Activity {
                 new LinearLayout.LayoutParams(
                         LinearLayout.LayoutParams.MATCH_PARENT,
                         LinearLayout.LayoutParams.WRAP_CONTENT);
+
         params.setMargins(0, 12, 0, 12);
         return params;
     }
 
     private void showDashboard() {
         LinearLayout layout = createLayout();
+
         layout.addView(makeText("لوحة التقدّم", 28, true));
+
         layout.addView(makeText(
                 "ستظهر هنا الدروس المكتملة والحفظ والتقدّم.",
                 20, false));
@@ -129,24 +126,5 @@ public class MainActivity extends Activity {
         layout.addView(backButton, buttonParams());
 
         setContentView(layout);
-    }
-
-    private void speak(String message) {
-        if (ttsReady && tts != null) {
-            tts.speak(message, TextToSpeech.QUEUE_FLUSH, null, "quran_voice");
-        } else {
-            Toast.makeText(this,
-                    "الصوت العربي غير متوفر حالياً على الهاتف",
-                    Toast.LENGTH_LONG).show();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (tts != null) {
-            tts.stop();
-            tts.shutdown();
-        }
-        super.onDestroy();
     }
 }
