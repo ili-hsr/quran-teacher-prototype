@@ -29,6 +29,11 @@ jobs:
         with:
           gradle-version: '8.9'
 
+      - name: Accept Android SDK licenses
+        run: yes | sdkmanager --licenses
+        env:
+          ANDROID_HOME: /usr/local/lib/android/sdk
+
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
 
