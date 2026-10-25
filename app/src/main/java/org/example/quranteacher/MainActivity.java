@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.Gravity;
 import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -28,8 +29,8 @@ import java.util.Locale;
 public class MainActivity extends Activity {
 
     private final int bg = Color.rgb(250, 248, 241);
-    private final int green = Color.rgb(78, 119, 83);
-    private final int ink = Color.rgb(43, 51, 42);
+    private final int green = Color.rgb(48, 91, 56);
+    private final int ink = Color.rgb(35, 40, 35);
     private static final int MIC_PERMISSION = 100;
 
     private SharedPreferences prefs;
@@ -42,6 +43,7 @@ public class MainActivity extends Activity {
     private int memoryIndex = 0;
     private boolean verseVisible = false;
     private int quizQuestion = 0;
+    private int quizSessionCorrect = 0;
 
     private final String[] verses = {
         "بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ",
@@ -54,13 +56,13 @@ public class MainActivity extends Activity {
     };
 
     private final String[] verseNumbers = {
-        "الفاتحة، الآية ١",
-        "الفاتحة، الآية ٢",
-        "الفاتحة، الآية ٣",
-        "الفاتحة، الآية ٤",
-        "الفاتحة، الآية ٥",
-        "الفاتحة، الآية ٦",
-        "الفاتحة، الآية ٧"
+        "سورة الفاتحة، الآية الأولى",
+        "سورة الفاتحة، الآية الثانية",
+        "سورة الفاتحة، الآية الثالثة",
+        "سورة الفاتحة، الآية الرابعة",
+        "سورة الفاتحة، الآية الخامسة",
+        "سورة الفاتحة، الآية السادسة",
+        "سورة الفاتحة، الآية السابعة"
     };
 
     @Override
@@ -69,8 +71,10 @@ public class MainActivity extends Activity {
 
         prefs = getSharedPreferences("quran_progress", MODE_PRIVATE);
 
+        getWindow().getDecorView().setBackgroundColor(bg);
+
         tts = new TextToSpeech(this, status -> {
-            if (status == TextToSpeech.SUCCESS) {
+            if (status == TextToSpeech.SUCCESS && tts != null) {
                 int result = tts.setLanguage(new Locale("ar"));
                 ttsReady = result != TextToSpeech.LANG_MISSING_DATA
                         && result != TextToSpeech.LANG_NOT_SUPPORTED;
@@ -80,9 +84,11 @@ public class MainActivity extends Activity {
         showHome();
     }
 
+    // La voix du professeur sert aux consignes,
+    // jamais à remplacer une récitation authentique du Coran.
     private void speak(String message) {
         if (ttsReady && tts != null) {
-            tts.speak(message, TextToSpeech.QUEUE_FLUSH, null, "quran_voice");
+            tts.speak(message, TextToSpeech.QUEUE_FLUSH, null, "teacher_voice");
         }
     }
 
@@ -92,6 +98,7 @@ public class MainActivity extends Activity {
         layout.setGravity(Gravity.CENTER_HORIZONTAL);
         layout.setPadding(24, 24, 24, 24);
         layout.setBackgroundColor(bg);
+        layout.setFocusable(false);
         return layout;
     }
 
@@ -101,56 +108,82 @@ public class MainActivity extends Activity {
         t.setTextSize(size);
         t.setTextColor(ink);
         t.setGravity(Gravity.CENTER);
-        t.setPadding(12, 14, 12, 14);
-        if (bold) t.setTypeface(null, Typeface.BOLD);
+        t.setPadding(16, 18, 16, 18);
+        t.setTextDirection(View.TEXT_DIRECTION_LOCALE);
+        t.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+
+        if (bold) {
+            t.setTypeface(null, Typeface.BOLD);
+        }
+
         return t;
     }
 
     private Button button(String label, Runnable action) {
         Button b = new Button(this);
         b.setText(label);
-        b.setTextSize(18);
+        b.setTextSize(20);
         b.setAllCaps(false);
         b.setTextColor(Color.WHITE);
         b.setBackgroundTintList(
-            android.content.res.ColorStateList.valueOf(green));
-        b.setPadding(12, 14, 12, 14);
+                android.content.res.ColorStateList.valueOf(green));
+        b.setPadding(16, 18, 16, 18);
+        b.setMinimumHeight(64);
+        b.setContentDescription(label);
         b.setOnClickListener(v -> action.run());
 
         LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
         p.setMargins(0, 8, 0, 8);
         b.setLayoutParams(p);
+
         return b;
     }
 
-    private void show(LinearLayout layout) {
+    private void show(LinearLayout layout, String announcement) {
         ScrollView scroll = new ScrollView(this);
         scroll.setFillViewport(true);
+        scroll.setContentDescription("Contenu de l'écran");
         scroll.addView(layout);
         setContentView(scroll);
+
+        // Annonce du nouvel écran pour les lecteurs d'écran.
+        scroll.sendAccessibilityEvent(
+                AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
+
+        if (announcement != null && !announcement.isEmpty()) {
+            scroll.announceForAccessibility(announcement);
+            speak(announcement);
+        }
     }
 
     private void title(LinearLayout layout, String value) {
-        layout.addView(text(value, 27, true));
+        TextView heading = text(value, 28, true);
+        heading.setAccessibilityHeading(true);
+        layout.addView(heading);
     }
 
     private void addVoiceButton(LinearLayout layout) {
-        layout.addView(button("🎙 التحدث بالأوامر", this::startVoice));
+        layout.addView(button(
+                "التحدث بالأوامر الصوتية",
+                this::startVoice));
     }
 
     private void addBack(LinearLayout layout) {
         addVoiceButton(layout);
-        layout.addView(button("العودة إلى الرئيسية", this::showHome));
+        layout.addView(button(
+                "العودة إلى الرئيسية",
+                this::showHome));
     }
 
     private void showHome() {
         currentScreen = "home";
+
         LinearLayout l = makeLayout();
         title(l, "مُعَلِّمُ القُرْآن");
-        l.addView(text("مرحباً بكِ", 22, true));
-        l.addView(text("تعلّمي القرآن خطوة بخطوة", 18, false));
+        l.addView(text("مرحباً بكِ", 24, true));
+        l.addView(text("تعلّمي القرآن خطوة بخطوة", 20, false));
 
         addVoiceButton(l);
         l.addView(button("الدروس", this::showLesson));
@@ -158,20 +191,29 @@ public class MainActivity extends Activity {
         l.addView(button("الاختبار", this::showQuiz));
         l.addView(button("التقدم", this::showProgress));
 
-        l.addView(text("نسخة تجريبية", 15, false));
-        show(l);
+        l.addView(text(
+                "نسخة تجريبية، يمكن استخدام الأزرار أو الأوامر الصوتية",
+                16, false));
+
+        show(l, "مرحباً بكِ في معلم القرآن. اختاري الدروس أو الحفظ والمراجعة أو الاختبار أو التقدم.");
     }
 
     private void showLesson() {
         currentScreen = "lesson";
+
         LinearLayout l = makeLayout();
         title(l, "درس سورة الفاتحة");
-        l.addView(text(verseNumbers[verseIndex], 20, true));
-        l.addView(text(verses[verseIndex], 27, true));
+
+        l.addView(text(verseNumbers[verseIndex], 22, true));
+        l.addView(text(verses[verseIndex], 30, true));
 
         l.addView(button("الآية السابقة", () -> {
-            if (verseIndex > 0) verseIndex--;
-            showLesson();
+            if (verseIndex > 0) {
+                verseIndex--;
+                showLesson();
+            } else {
+                speak("هذه هي الآية الأولى");
+            }
         }));
 
         l.addView(button("الآية التالية", () -> {
@@ -180,7 +222,7 @@ public class MainActivity extends Activity {
                 showLesson();
             } else {
                 prefs.edit().putBoolean("fatiha_done", true).apply();
-                speak("انتهى الدرس، تم حفظ التقدم");
+                speak("انتهى درس سورة الفاتحة وتم حفظ التقدم");
                 showLesson();
             }
         }));
@@ -191,27 +233,29 @@ public class MainActivity extends Activity {
         }));
 
         addBack(l);
-        show(l);
+        show(l, verseNumbers[verseIndex]);
     }
 
     private void showMemory() {
         currentScreen = "memory";
+
         LinearLayout l = makeLayout();
         title(l, "الحفظ والمراجعة");
-        l.addView(text(verseNumbers[memoryIndex], 20, true));
+
+        l.addView(text(verseNumbers[memoryIndex], 22, true));
 
         if (verseVisible) {
-            l.addView(text(verses[memoryIndex], 27, true));
+            l.addView(text(verses[memoryIndex], 30, true));
         } else {
-            l.addView(text("الآية مخفية، حاولي تذكّرها", 21, true));
+            l.addView(text("الآية مخفية، حاولي تذكّرها", 22, true));
         }
 
         l.addView(button(
-            verseVisible ? "إخفاء الآية" : "إظهار الآية",
-            () -> {
-                verseVisible = !verseVisible;
-                showMemory();
-            }));
+                verseVisible ? "إخفاء الآية" : "إظهار الآية",
+                () -> {
+                    verseVisible = !verseVisible;
+                    showMemory();
+                }));
 
         l.addView(button("الآية التالية", () -> {
             memoryIndex = (memoryIndex + 1) % verses.length;
@@ -226,49 +270,60 @@ public class MainActivity extends Activity {
         }));
 
         addBack(l);
-        show(l);
+        show(l, verseVisible
+                ? verseNumbers[memoryIndex] + ". تم إظهار الآية."
+                : verseNumbers[memoryIndex] + ". الآية مخفية. حاولي تذكّرها.");
     }
 
     private void showQuiz() {
         currentScreen = "quiz";
+
         LinearLayout l = makeLayout();
         title(l, "اختبار القرآن");
 
         if (quizQuestion == 0) {
             l.addView(text(
-                "ما اسم السورة التي تبدأ بالحمد لله رب العالمين؟",
-                22, true));
+                    "ما اسم السورة التي تبدأ بالحمد لله رب العالمين؟",
+                    24, true));
+
             l.addView(button("سورة الفاتحة", () -> answerQuiz(true)));
             l.addView(button("سورة الإخلاص", () -> answerQuiz(false)));
         } else {
             l.addView(text(
-                "انتهى الاختبار. عدد الإجابات الصحيحة: "
-                + prefs.getInt("quiz_correct", 0),
-                21, true));
+                    "انتهى الاختبار. عدد الإجابات الصحيحة: "
+                            + quizSessionCorrect,
+                    23, true));
+
             l.addView(button("إعادة الاختبار", () -> {
                 quizQuestion = 0;
+                quizSessionCorrect = 0;
                 showQuiz();
             }));
         }
 
         addBack(l);
-        show(l);
+        show(l, quizQuestion == 0
+                ? "بدأ الاختبار. ما اسم السورة التي تبدأ بالحمد لله رب العالمين؟"
+                : "انتهى الاختبار. عدد الإجابات الصحيحة: " + quizSessionCorrect);
     }
 
     private void answerQuiz(boolean correct) {
         if (correct) {
-            int score = prefs.getInt("quiz_correct", 0) + 1;
-            prefs.edit().putInt("quiz_correct", score).apply();
+            quizSessionCorrect++;
+            int total = prefs.getInt("quiz_correct", 0) + 1;
+            prefs.edit().putInt("quiz_correct", total).apply();
             speak("إجابة صحيحة");
         } else {
-            speak("ليست الإجابة الصحيحة، حاولي مرة أخرى");
+            speak("إجابة غير صحيحة. الإجابة الصحيحة هي سورة الفاتحة");
         }
+
         quizQuestion = 1;
         showQuiz();
     }
 
     private void showProgress() {
         currentScreen = "progress";
+
         LinearLayout l = makeLayout();
         title(l, "التقدم");
 
@@ -277,38 +332,45 @@ public class MainActivity extends Activity {
         int score = prefs.getInt("quiz_correct", 0);
 
         l.addView(text(
-            "درس الفاتحة: " + (done ? "مكتمل" : "لم يكتمل"),
-            20, true));
-        l.addView(text("عدد المراجعات: " + reviews, 20, false));
-        l.addView(text("الإجابات الصحيحة: " + score, 20, false));
+                "درس الفاتحة: " + (done ? "مكتمل" : "لم يكتمل"),
+                22, true));
+        l.addView(text("عدد المراجعات: " + reviews, 22, false));
+        l.addView(text("الإجابات الصحيحة: " + score, 22, false));
 
         addBack(l);
-        show(l);
+        show(l, "صفحة التقدم. درس الفاتحة "
+                + (done ? "مكتمل" : "لم يكتمل")
+                + ". عدد المراجعات: " + reviews
+                + ". عدد الإجابات الصحيحة: " + score);
     }
 
     private void startVoice() {
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(
-                new String[]{Manifest.permission.RECORD_AUDIO},
-                MIC_PERMISSION);
+                    new String[]{Manifest.permission.RECORD_AUDIO},
+                    MIC_PERMISSION);
             return;
         }
 
         if (!SpeechRecognizer.isRecognitionAvailable(this)) {
             speak("التعرف على الصوت غير متوفر على هذا الجهاز");
             Toast.makeText(this,
-                "Le service de reconnaissance vocale n'est pas disponible.",
-                Toast.LENGTH_LONG).show();
+                    "Le service de reconnaissance vocale n'est pas disponible.",
+                    Toast.LENGTH_LONG).show();
             return;
         }
 
         try {
-            if (recognizer != null) recognizer.destroy();
+            if (recognizer != null) {
+                recognizer.destroy();
+            }
+
             recognizer = SpeechRecognizer.createSpeechRecognizer(this);
 
             recognizer.setRecognitionListener(new RecognitionListener() {
-                @Override public void onReadyForSpeech(Bundle params) {
+                @Override
+                public void onReadyForSpeech(Bundle params) {
                     speak("تفضلي، قولي الأمر");
                 }
 
@@ -324,8 +386,7 @@ public class MainActivity extends Activity {
 
                 @Override
                 public void onResults(Bundle results) {
-                    ArrayList<String> matches =
-                        results.getStringArrayList(
+                    ArrayList<String> matches = results.getStringArrayList(
                             SpeechRecognizer.RESULTS_RECOGNITION);
 
                     if (matches != null && !matches.isEmpty()) {
@@ -339,11 +400,14 @@ public class MainActivity extends Activity {
                 @Override public void onEvent(int eventType, Bundle params) {}
             });
 
-            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            Intent intent = new Intent(
+                    RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(
+                    RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ar-SA");
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "ar-SA");
+            intent.putExtra(
+                    RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "ar-SA");
             intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
 
             recognizer.startListening(intent);
@@ -354,44 +418,45 @@ public class MainActivity extends Activity {
     }
 
     private String normalizeArabic(String input) {
-        return input
-            .replaceAll("[\\u064B-\\u065F\\u0670]", "")
-            .replace("أ", "ا")
-            .replace("إ", "ا")
-            .replace("آ", "ا")
-            .replace("ى", "ي")
-            .trim();
+        String normalized = Normalizer.normalize(
+                input, Normalizer.Form.NFD);
+
+        return normalized
+                .replaceAll("[\\u064B-\\u065F\\u0670]", "")
+                .replace("أ", "ا")
+                .replace("إ", "ا")
+                .replace("آ", "ا")
+                .replace("ى", "ي")
+                .trim();
     }
 
     private void handleCommand(String rawCommand) {
         String c = normalizeArabic(rawCommand);
 
         if (c.contains("الدروس") || c.contains("درس")) {
-            speak("فتح الدروس");
             showLesson();
         } else if (c.contains("الحفظ") || c.contains("المراجعة")) {
-            speak("فتح الحفظ والمراجعة");
             showMemory();
         } else if (c.contains("الاختبار") || c.contains("اختبار")) {
-            speak("فتح الاختبار");
             quizQuestion = 0;
+            quizSessionCorrect = 0;
             showQuiz();
-        } else if (c.contains("التقدم") || c.contains("التقدم")) {
-            speak("فتح التقدم");
+        } else if (c.contains("التقدم")) {
             showProgress();
         } else if (c.contains("الرئيسية") || c.contains("العودة")) {
-            speak("العودة إلى الرئيسية");
             showHome();
         } else if (c.contains("التالية") || c.contains("التالي")) {
             if ("lesson".equals(currentScreen)) {
-                if (verseIndex < verses.length - 1) verseIndex++;
-                showLesson();
-                speak(verseNumbers[verseIndex]);
+                if (verseIndex < verses.length - 1) {
+                    verseIndex++;
+                    showLesson();
+                } else {
+                    speak("هذه هي الآية الأخيرة");
+                }
             } else if ("memory".equals(currentScreen)) {
                 memoryIndex = (memoryIndex + 1) % verses.length;
                 verseVisible = false;
                 showMemory();
-                speak(verseNumbers[memoryIndex]);
             } else {
                 speak("هذا الأمر متاح داخل الدرس أو المراجعة");
             }
@@ -399,37 +464,41 @@ public class MainActivity extends Activity {
             if ("lesson".equals(currentScreen) && verseIndex > 0) {
                 verseIndex--;
                 showLesson();
-                speak(verseNumbers[verseIndex]);
+            } else if ("memory".equals(currentScreen) && memoryIndex > 0) {
+                memoryIndex--;
+                verseVisible = false;
+                showMemory();
             } else {
                 speak("لا توجد آية سابقة هنا");
             }
-        } else if (c.contains("اظهر") || c.contains("اكشف")) {
+        } else if (c.contains("اظهر") || c.contains("اكشف")
+                || c.contains("أظهر")) {
             if ("memory".equals(currentScreen)) {
                 verseVisible = true;
                 showMemory();
-                speak("تم إظهار الآية");
             } else {
-                speak("افتحي الحفظ أولاً");
+                speak("افتحي الحفظ أولا");
             }
-        } else if (c.contains("اخف")) {
+        } else if (c.contains("اخف") || c.contains("أخف")) {
             if ("memory".equals(currentScreen)) {
                 verseVisible = false;
                 showMemory();
-                speak("تم إخفاء الآية");
             } else {
-                speak("افتحي الحفظ أولاً");
+                speak("افتحي الحفظ أولا");
             }
-        } else if (c.contains("مساعدة") || c.contains("الاوامر")) {
-            speak("قولي: افتح الدروس، افتح الحفظ، افتح الاختبار، افتح التقدم، الآية التالية، الآية السابقة، أو العودة إلى الرئيسية");
+        } else if (c.contains("مساعدة") || c.contains("الاوامر")
+                || c.contains("الأوامر")) {
+            speak("قولي: افتح الدروس، افتح الحفظ، افتح الاختبار، افتح التقدم، الآية التالية، الآية السابقة، أظهر الآية، أخف الآية، أو العودة إلى الرئيسية");
         } else {
-            speak("لم أفهم الأمر. قولي: مساعدة، لسماع الأوامر المتاحة");
+            speak("لم أفهم الأمر. قولي مساعدة لسماع الأوامر المتاحة");
         }
     }
 
     @Override
     public void onRequestPermissionsResult(
             int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        super.onRequestPermissionsResult(
+                requestCode, permissions, grantResults);
 
         if (requestCode == MIC_PERMISSION
                 && grantResults.length > 0
@@ -446,11 +515,13 @@ public class MainActivity extends Activity {
             recognizer.destroy();
             recognizer = null;
         }
+
         if (tts != null) {
             tts.stop();
             tts.shutdown();
             tts = null;
         }
+
         super.onDestroy();
     }
 }
