@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Identité -->
+    <string name="app_name">معلّم القرآن</string>
+    <string name="app_tagline">Ton professeur personnel de Coran</string>
+    <string name="home_greeting">Bienvenue</string>
+
+    <!-- Boutons de navigation -->
+    <string name="btn_start_session">Commencer une séance</string>
+    <string name="btn_lessons">Leçons</string>
+    <string name="btn_memory">Mémorisation</string>
+    <string name="btn_exam">Examen oral</string>
+    <string name="btn_progress">Progression</string>
+    <string name="btn_settings">Paramètres</string>
+    <string name="btn_home">Retour à l\'accueil</string>
+    <string name="btn_voice">Commande vocale</string>
+    <string name="btn_repeat_instruction">Répéter la consigne</string>
+    <string name="btn_listen_verse">Écouter la récitation</string>
+    <string name="btn_next_verse">Verset suivant</string>
+    <string name="btn_prev_verse">Verset précédent</string>
+    <string name="btn_learned">J\'ai mémorisé ce verset</string>
+    <string name="btn_hide_verse">Cacher le verset</string>
+    <string name="btn_show_verse">Montrer le verset</string>
+    <string name="btn_recited">J\'ai récité de mémoire</string>
+    <string name="btn_correct">C\'était juste</string>
+    <string name="btn_review">À revoir</string>
+    <string name="btn_finish_exam">Terminer l\'examen</string>
+    <string name="btn_new_exam">Nouvel examen</string>
+    <string name="btn_test_voice">Tester la voix du professeur</string>
+
+    <!-- Noms d'écrans (annoncés par TalkBack) -->
+    <string name="screen_home">Accueil</string>
+    <string name="screen_lessons">Leçons</string>
+    <string name="screen_memory">Mémorisation</string>
+    <string name="screen_exam">Examen oral</string>
+    <string name="screen_progress">Progression</string>
+    <string name="screen_settings">Paramètres</string>
+
+    <!-- Coran -->
+    <string name="surah_fatiha">Al-Fatiha</string>
+    <string name="verse_label">%1$s, verset %2$d</string>
+    <string name="verse_counter">Verset %1$d sur %2$d</string>
+    <string name="status_learned">Mémorisé</string>
+    <string name="status_not_learned">Pas encore mémorisé</string>
+    <string name="repetitions_count">Répétitions : %1$d</string>
+
+    <!-- Progression -->
+    <string name="progress_learned">Versets mémorisés : %1$d</string>
+    <string name="progress_repetitions">Répétitions enregistrées : %1$d</string>
+    <string name="progress_today">Répétitions aujourd\'hui : %1$d sur %2$d</string>
+    <string name="progress_exams">Examens passés : %1$d</string>
+    <string name="progress_average">Moyenne des examens : %1$d pour cent</string>
+    <string name="progress_time">Temps d\'apprentissage : %1$d minutes</string>
+    <string name="progress_none">Pas encore de données. Commence une leçon.</string>
+    <string name="progress_local_note">Tes progrès restent sur ce téléphone, sans Internet.</string>
+
+    <!-- Paramètres -->
+    <string name="settings_interface_language">Langue de l\'interface</string>
+    <string name="settings_teacher_language">Langue du professeur</string>
+    <string name="settings_teacher_voice">Voix du professeur</string>
+    <string name="settings_teacher_rate">Vitesse de la voix</string>
+    <string name="settings_recognition_language">Langue de reconnaissance vocale</string>
+    <string name="voice_on">Voix activée</string>
+    <string name="voice_off">Voix désactivée</string>
+    <string name="rate_slow">Lente</string>
+    <string name="rate_normal">Normale</string>
+    <string name="rate_fast">Rapide</string>
+    <string name="current_choice">%1$s, choix actuel</string>
+    <string name="lang_fr">Français</string>
+    <string name="lang_ar">Arabe</string>
+    <string name="lang_en">Anglais</string>
+    <string name="lang_nl">Néerlandais</string>
+    <string name="recog_ar">Arabe standard</string>
+    <string name="recog_fr">Français</string>
+    <string name="recog_ma">Darija marocaine</string>
+    <string name="settings_recognition_note">La reconnaissance hors ligne dépend du moteur vocal installé sur le téléphone.</string>
+
+    <!-- Voix du professeur -->
+    <string name="teacher_home">Bonjour. Que veux-tu faire ?</string>
+    <string name="teacher_home_with_progress">Bonjour. Tu as déjà mémorisé %1$d versets. Que veux-tu faire ?</string>
+    <string name="teacher_listening">Je t\'écoute.</string>
+    <string name="teacher_not_understood">Je n\'ai pas compris. Dis aide pour connaître les commandes.</string>
+    <string name="teacher_help">Commandes disponibles : accueil, leçons, mémorisation, examen, progression, paramètres, suivant, précédent, montre, cache, répète, aide.</string>
+    <string name="teacher_verse_intro">%1$s, verset %2$d.</string>
+    <string name="teacher_verse_first">C\'est le premier verset de la sourate.</string>
+    <string name="teacher_verse_last">C\'est le dernier verset de la sourate.</string>
+    <string name="teacher_audio_missing">La récitation audio n\'est pas encore installée. Elle arrive à la prochaine étape.</string>
+    <string name="teacher_learned_saved">C\'est noté. Que Dieu te facilite.</string>
+    <string name="teacher_review_saved">Révision enregistrée.</string>
+    <string name="teacher_verse_hidden">Le verset est caché. Récite-le de mémoire, puis montre-le pour vérifier.</string>
+    <string name="teacher_verse_shown">Voici le verset.</string>
+    <string name="teacher_memory_intro">Mémorisation. Récite le verset de mémoire, puis vérifie.</string>
+    <string name="teacher_exam_intro">Examen oral. Récite le verset demandé, puis dis si c\'était juste.</string>
+    <string name="teacher_exam_question">Récite %1$s, verset %2$d.</string>
+    <string name="teacher_exam_score">Examen terminé. %1$d bonnes réponses sur %2$d.</string>
+    <string name="teacher_progress_intro">Voici ta progression.</string>
+    <string name="teacher_settings_intro">Paramètres. Choisis une option.</string>
+    <string name="teacher_saved">C\'est enregistré.</string>
+    <string name="teacher_mic_denied">Sans micro, les commandes vocales ne peuvent pas fonctionner.</string>
+    <string name="teacher_mic_unavailable">La reconnaissance vocale n\'est pas disponible sur ce téléphone.</string>
+    <string name="teacher_voice_missing">La voix de cette langue n\'est pas installée sur ce téléphone.</string>
+    <string name="teacher_voice_test">Bonjour, je suis ton professeur de Coran.</string>
+    <string name="teacher_encouragement">Bravo, continue ainsi.</string>
+    <string name="teacher_recognition_note">La reconnaissance vocale peut se tromper. La correction du tajwid n\'est pas garantie.</string>
+    <string name="memory_instruction">Récite de mémoire, puis appuie sur Montrer le verset pour vérifier.</string>
+    <string name="exam_instruction">Appuie sur C\'était juste ou À revoir après avoir récité.</string>
+
+    <!-- Mots-clés des commandes vocales (toutes les langues sont acceptées) -->
+    <string-array name="cmd_home">
+        <item>accueil</item><item>retour</item><item>maison</item><item>début</item>
+    </string-array>
+    <string-array name="cmd_lessons">
+        <item>leçon</item><item>leçons</item><item>cours</item><item>apprendre</item>
+    </string-array>
+    <string-array name="cmd_memory">
+        <item>mémorisation</item><item>mémoire</item><item>mémoriser</item><item>révision</item><item>réviser</item>
+    </string-array>
+    <string-array name="cmd_exam">
+        <item>examen</item><item>test</item><item>épreuve</item><item>interrogation</item>
+    </string-array>
+    <string-array name="cmd_progress">
+        <item>progression</item><item>progrès</item><item>résultat</item><item>résultats</item>
+    </string-array>
+    <string-array name="cmd_settings">
+        <item>paramètres</item><item>réglages</item><item>configuration</item>
+    </string-array>
+    <string-array name="cmd_next">
+        <item>suivant</item><item>suivante</item><item>après</item><item>ensuite</item>
+    </string-array>
+    <string-array name="cmd_prev">
+        <item>précédent</item><item>précédente</item><item>avant</item>
+    </string-array>
+    <string-array name="cmd_show">
+        <item>montre</item><item>affiche</item><item>visible</item><item>montrer</item>
+    </string-array>
+    <string-array name="cmd_hide">
+        <item>cache</item><item>masque</item><item>cacher</item><item>masquer</item>
+    </string-array>
+    <string-array name="cmd_repeat">
+        <item>répète</item><item>repete</item><item>encore</item><item>répéter</item>
+    </string-array>
+    <string-array name="cmd_help">
+        <item>aide</item><item>commandes</item><item>au secours</item>
+    </string-array>
+    <string-array name="cmd_stop">
+        <item>stop</item><item>arrête</item><item>pause</item>
+    </string-array>
+    <string-array name="cmd_yes">
+        <item>oui</item><item>correct</item><item>d accord</item>
+    </string-array>
+    <string-array name="cmd_no">
+        <item>non</item><item>faux</item><item>erreur</item>
+    </string-array>
+</resources>

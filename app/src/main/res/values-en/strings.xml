@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">معلّم القرآن</string>
+    <string name="app_tagline">Your personal Quran teacher</string>
+    <string name="home_greeting">Welcome</string>
+
+    <string name="btn_start_session">Start a session</string>
+    <string name="btn_lessons">Lessons</string>
+    <string name="btn_memory">Memorisation</string>
+    <string name="btn_exam">Oral exam</string>
+    <string name="btn_progress">Progress</string>
+    <string name="btn_settings">Settings</string>
+    <string name="btn_home">Back to home</string>
+    <string name="btn_voice">Voice command</string>
+    <string name="btn_repeat_instruction">Repeat the instruction</string>
+    <string name="btn_listen_verse">Listen to the recitation</string>
+    <string name="btn_next_verse">Next verse</string>
+    <string name="btn_prev_verse">Previous verse</string>
+    <string name="btn_learned">I have memorised this verse</string>
+    <string name="btn_hide_verse">Hide the verse</string>
+    <string name="btn_show_verse">Show the verse</string>
+    <string name="btn_recited">I recited from memory</string>
+    <string name="btn_correct">That was right</string>
+    <string name="btn_review">Needs review</string>
+    <string name="btn_finish_exam">Finish the exam</string>
+    <string name="btn_new_exam">New exam</string>
+    <string name="btn_test_voice">Test the teacher voice</string>
+
+    <string name="screen_home">Home</string>
+    <string name="screen_lessons">Lessons</string>
+    <string name="screen_memory">Memorisation</string>
+    <string name="screen_exam">Oral exam</string>
+    <string name="screen_progress">Progress</string>
+    <string name="screen_settings">Settings</string>
+
+    <string name="surah_fatiha">Al-Fatiha</string>
+    <string name="verse_label">%1$s, verse %2$d</string>
+    <string name="verse_counter">Verse %1$d of %2$d</string>
+    <string name="status_learned">Memorised</string>
+    <string name="status_not_learned">Not memorised yet</string>
+    <string name="repetitions_count">Repetitions: %1$d</string>
+
+    <string name="progress_learned">Verses memorised: %1$d</string>
+    <string name="progress_repetitions">Repetitions recorded: %1$d</string>
+    <string name="progress_today">Repetitions today: %1$d of %2$d</string>
+    <string name="progress_exams">Exams taken: %1$d</string>
+    <string name="progress_average">Exam average: %1$d per cent</string>
+    <string name="progress_time">Learning time: %1$d minutes</string>
+    <string name="progress_none">No data yet. Start a lesson.</string>
+    <string name="progress_local_note">Your progress stays on this phone, without internet.</string>
+
+    <string name="settings_interface_language">Interface language</string>
+    <string name="settings_teacher_language">Teacher language</string>
+    <string name="settings_teacher_voice">Teacher voice</string>
+    <string name="settings_teacher_rate">Voice speed</string>
+    <string name="settings_recognition_language">Speech recognition language</string>
+    <string name="voice_on">Voice on</string>
+    <string name="voice_off">Voice off</string>
+    <string name="rate_slow">Slow</string>
+    <string name="rate_normal">Normal</string>
+    <string name="rate_fast">Fast</string>
+    <string name="current_choice">%1$s, current choice</string>
+    <string name="lang_fr">French</string>
+    <string name="lang_ar">Arabic</string>
+    <string name="lang_en">English</string>
+    <string name="lang_nl">Dutch</string>
+    <string name="recog_ar">Standard Arabic</string>
+    <string name="recog_fr">French</string>
+    <string name="recog_ma">Moroccan Darija</string>
+    <string name="settings_recognition_note">Offline recognition depends on the speech engine installed on the phone.</string>
+
+    <string name="teacher_home">Hello. What do you want to do?</string>
+    <string name="teacher_home_with_progress">Hello. You have memorised %1$d verses. What do you want to do?</string>
+    <string name="teacher_listening">I am listening.</string>
+    <string name="teacher_not_understood">I did not understand. Say help to hear the commands.</string>
+    <string name="teacher_help">Available commands: home, lessons, memorisation, exam, progress, settings, next, previous, show, hide, repeat, help.</string>
+    <string name="teacher_verse_intro">%1$s, verse %2$d.</string>
+    <string name="teacher_verse_first">This is the first verse of the surah.</string>
+    <string name="teacher_verse_last">This is the last verse of the surah.</string>
+    <string name="teacher_audio_missing">The audio recitation is not installed yet. It comes in the next step.</string>
+    <string name="teacher_learned_saved">Noted. May God make it easy for you.</string>
+    <string name="teacher_review_saved">Review recorded.</string>
+    <string name="teacher_verse_hidden">The verse is hidden. Recite it from memory, then show it to check.</string>
+    <string name="teacher_verse_shown">Here is the verse.</string>
+    <string name="teacher_memory_intro">Memorisation. Recite the verse from memory, then check.</string>
+    <string name="teacher_exam_intro">Oral exam. Recite the requested verse, then say whether it was right.</string>
+    <string name="teacher_exam_question">Recite %1$s, verse %2$d.</string>
+    <string name="teacher_exam_score">Exam finished. %1$d correct answers out of %2$d.</string>
+    <string name="teacher_progress_intro">Here is your progress.</string>
+    <string name="teacher_settings_intro">Settings. Choose an option.</string>
+    <string name="teacher_saved">Saved.</string>
+    <string name="teacher_mic_denied">Without the microphone, voice commands cannot work.</string>
+    <string name="teacher_mic_unavailable">Speech recognition is not available on this phone.</string>
+    <string name="teacher_voice_missing">The voice for this language is not installed on this phone.</string>
+    <string name="teacher_voice_test">Hello, I am your Quran teacher.</string>
+    <string name="teacher_encouragement">Well done, keep going.</string>
+    <string name="teacher_recognition_note">Speech recognition can make mistakes. Tajwid correction is not guaranteed.</string>
+    <string name="memory_instruction">Recite from memory, then press Show the verse to check.</string>
+    <string name="exam_instruction">Press That was right or Needs review after reciting.</string>
+
+    <string-array name="cmd_home">
+        <item>home</item><item>back</item><item>start</item>
+    </string-array>
+    <string-array name="cmd_lessons">
+        <item>lesson</item><item>lessons</item><item>learn</item>
+    </string-array>
+    <string-array name="cmd_memory">
+        <item>memorisation</item><item>memorization</item><item>memory</item><item>revise</item><item>review</item>
+    </string-array>
+    <string-array name="cmd_exam">
+        <item>exam</item><item>test</item><item>quiz</item>
+    </string-array>
+    <string-array name="cmd_progress">
+        <item>progress</item><item>results</item><item>score</item>
+    </string-array>
+    <string-array name="cmd_settings">
+        <item>settings</item><item>options</item><item>preferences</item>
+    </string-array>
+    <string-array name="cmd_next">
+        <item>next</item><item>following</item>
+    </string-array>
+    <string-array name="cmd_prev">
+        <item>previous</item><item>prior</item>
+    </string-array>
+    <string-array name="cmd_show">
+        <item>show</item><item>display</item><item>reveal</item>
+    </string-array>
+    <string-array name="cmd_hide">
+        <item>hide</item><item>conceal</item>
+    </string-array>
+    <string-array name="cmd_repeat">
+        <item>repeat</item><item>again</item><item>once more</item>
+    </string-array>
+    <string-array name="cmd_help">
+        <item>help</item><item>commands</item>
+    </string-array>
+    <string-array name="cmd_stop">
+        <item>stop</item><item>pause</item><item>cancel</item>
+    </string-array>
+    <string-array name="cmd_yes">
+        <item>yes</item><item>correct</item><item>right</item>
+    </string-array>
+    <string-array name="cmd_no">
+        <item>no</item><item>wrong</item><item>error</item>
+    </string-array>
+</resources>
