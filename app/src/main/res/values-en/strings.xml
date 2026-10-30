@@ -151,4 +151,12 @@
     <string name="audio_folder_default">Default folder: %1$s</string>
     <string name="teacher_audio_not_found">The audio file for this verse cannot be found.</string>
     <string name="teacher_audio_playing">Here is the recitation.</string>
+    <string name="audio_install_button">Install the recitations on the card</string>
+    <string name="audio_install_started">Installing the recitations on the memory card. Do not close the app.</string>
+    <string name="audio_install_done">Done: %1$d verses copied and verified in %2$s.</string>
+    <string name="audio_install_partial">Incomplete: %1$d of %2$d verses verified. Doubtful files were removed.</string>
+    <string name="audio_install_nothing">This version includes no recitation.</string>
+    <string name="audio_install_no_sd">The memory card is not available: recitations go to the app storage.</string>
+    <string name="audio_install_permission">Without storage access the recitations cannot be copied to the card.</string>
+    <string name="exam_summary">Exam finished: %1$d correct answers out of %2$d.</string>
 </resources>

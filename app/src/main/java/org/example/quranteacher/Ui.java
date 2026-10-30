@@ -112,7 +112,7 @@ public final class Ui {
 
     public static TextView meta(Context c, CharSequence value) {
         TextView t = body(c, value);
-        t.setTextSize(16);
+        t.setTextSize(20);
         t.setTextColor(INK_SOFT);
         return t;
     }

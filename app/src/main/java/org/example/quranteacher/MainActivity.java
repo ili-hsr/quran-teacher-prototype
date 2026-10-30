@@ -11,6 +11,10 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.screen_home));
         buildScreen();
+        // Premier lancement : les récitations livrées partent sur la carte.
+        if (!AudioInstaller.isInstalled(this) && AudioInstaller.hasBundle(this)) {
+            installBundledAudio();
+        }
     }
 
     private void buildScreen() {

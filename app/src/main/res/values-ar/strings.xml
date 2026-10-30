@@ -151,4 +151,12 @@
     <string name="audio_folder_default">المجلد الافتراضي: %1$s</string>
     <string name="teacher_audio_not_found">ملف الصوت لهذه الآية غير موجود.</string>
     <string name="teacher_audio_playing">هذه هي التلاوة.</string>
+    <string name="audio_install_button">تثبيت التلاوات على البطاقة</string>
+    <string name="audio_install_started">جارٍ تثبيت التلاوات على بطاقة الذاكرة. لا تغلق التطبيق.</string>
+    <string name="audio_install_done">تم التثبيت: %1$d آية منسوخة ومُتحقَّق منها في %2$s.</string>
+    <string name="audio_install_partial">التثبيت غير مكتمل: %1$d من %2$d تم التحقق منها. أُزيلت الملفات المشبوهة.</string>
+    <string name="audio_install_nothing">لا توجد تلاوات مضمّنة في هذا الإصدار.</string>
+    <string name="audio_install_no_sd">بطاقة الذاكرة غير متاحة: ستُحفظ التلاوات في ذاكرة التطبيق.</string>
+    <string name="audio_install_permission">بدون صلاحية التخزين لا يمكن نسخ التلاوات إلى البطاقة.</string>
+    <string name="exam_summary">انتهى الامتحان: %1$d إجابات صحيحة من %2$d.</string>
 </resources>

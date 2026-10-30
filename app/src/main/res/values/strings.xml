@@ -165,4 +165,12 @@
     <string name="audio_folder_default">Dossier par défaut : %1$s</string>
     <string name="teacher_audio_not_found">Le fichier audio de ce verset est introuvable.</string>
     <string name="teacher_audio_playing">Voici la récitation.</string>
+    <string name="audio_install_button">Installer les récitations sur la carte</string>
+    <string name="audio_install_started">Installation des récitations sur la carte mémoire. Ne ferme pas l\'application.</string>
+    <string name="audio_install_done">Installation terminée : %1$d versets copiés et vérifiés dans %2$s.</string>
+    <string name="audio_install_partial">Installation incomplète : %1$d versets vérifiés sur %2$d. Les fichiers douteux ont été retirés.</string>
+    <string name="audio_install_nothing">Aucune récitation n\'est incluse dans cette version.</string>
+    <string name="audio_install_no_sd">La carte mémoire n\'est pas accessible : les récitations vont dans la mémoire de l\'application.</string>
+    <string name="audio_install_permission">Sans accès au stockage, les récitations ne peuvent pas être copiées sur la carte.</string>
+    <string name="exam_summary">Examen terminé : %1$d bonnes réponses sur %2$d.</string>
 </resources>

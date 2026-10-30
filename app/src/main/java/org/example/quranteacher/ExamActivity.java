@@ -133,10 +133,8 @@ public class ExamActivity extends BaseActivity {
         int answered = Math.min(questionIndex, questions.size());
         progress.addExamResult(correctAnswers, Math.max(answered, 1));
 
-        questionView.setText(getString(R.string.progress_average,
-                answered == 0 ? 0 : Math.round(100f * correctAnswers / answered)));
-        progressView.setText(getString(R.string.teacher_exam_score,
-                correctAnswers, answered));
+        questionView.setText(getString(R.string.exam_summary, correctAnswers, answered));
+        progressView.setText("");
         feedbackView.setText(getString(R.string.teacher_recognition_note));
         answerRow.setVisibility(LinearLayout.GONE);
         finishedRow.setVisibility(LinearLayout.VISIBLE);

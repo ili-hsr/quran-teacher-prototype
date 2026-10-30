@@ -33,6 +33,7 @@ public abstract class BaseActivity extends Activity {
 
     private static final int REQ_MIC = 210;
     private static final int REQ_TREE = 220;
+    private static final int REQ_STORAGE = 230;
     /** Laisse la consigne se terminer avant d'ouvrir le micro. */
     private static final long LISTEN_DELAY_MS = 1100L;
 
@@ -263,6 +264,15 @@ public abstract class BaseActivity extends Activity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions,
                                            int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == REQ_STORAGE) {
+            if (grantResults.length > 0
+                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                installBundledAudio();
+            } else {
+                say(R.string.audio_install_permission);
+            }
+            return;
+        }
         if (requestCode != REQ_MIC) {
             return;
         }
@@ -333,7 +343,9 @@ public abstract class BaseActivity extends Activity {
             say(R.string.teacher_audio_not_found);
             return;
         }
-        say(R.string.teacher_audio_playing);
+        if (teacher != null) {
+            teacher.stop();
+        }
         player.play(uri, new RecitationPlayer.Listener() {
             @Override
             public void onFinished() {
@@ -370,7 +382,42 @@ public abstract class BaseActivity extends Activity {
     }
 
     protected void onAudioFolderChosen() {
+        recitations.invalidate();
         say(R.string.audio_folder_count, recitations.availableCount());
+    }
+
+    // --- Transfert des récitations livrées avec l'application ---------------
+
+    /**
+     * Copie les récitations de l'APK vers la carte mémoire, vérifie chaque
+     * empreinte SHA-256, puis ne conserve aucune copie interne.
+     */
+    protected void installBundledAudio() {
+        if (!AudioInstaller.hasBundle(this)) {
+            say(R.string.audio_install_nothing);
+            return;
+        }
+        if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQ_STORAGE);
+            return;
+        }
+        say(R.string.audio_install_started);
+        AudioInstaller.install(this, this::onAudioInstalled);
+    }
+
+    protected void onAudioInstalled(AudioInstaller.Result result) {
+        if (recitations != null) {
+            recitations.invalidate();
+        }
+        if (result.prepared == 0) {
+            say(R.string.audio_install_nothing);
+        } else if (result.ok) {
+            say(R.string.audio_install_done, result.verified, result.path);
+        } else {
+            say(R.string.audio_install_partial, result.verified, result.prepared);
+        }
     }
 
     @Override

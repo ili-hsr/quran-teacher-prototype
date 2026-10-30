@@ -14,4 +14,25 @@ android {
         versionCode 1
         versionName '0.1'
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    testOptions {
+        unitTests.returnDefaultValues = true
+    }
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+}
+
+// La CI lance `assembleDebug` : on y rattache les tests JVM pour qu'ils
+// s'exécutent à chaque build sans modifier le workflow GitHub.
+tasks.whenTaskAdded { task ->
+    if (task.name == 'assembleDebug') {
+        task.dependsOn 'testDebugUnitTest'
+    }
 }

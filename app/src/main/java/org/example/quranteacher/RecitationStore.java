@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.SystemClock;
 import android.provider.DocumentsContract;
 
 import java.io.File;
@@ -27,8 +28,13 @@ public final class RecitationStore {
     private static final String KEY_TREE = "audio_tree_uri";
     private static final String[] EXTENSIONS = {"mp3", "ogg", "m4a", "aac", "wav", "opus"};
 
+    /** L'index est réutilisé 20 s : un scan de carte à chaque appui coûterait cher. */
+    private static final long CACHE_MS = 20000L;
+
     private final Context context;
     private final SharedPreferences prefs;
+    private Map<String, Uri> cache;
+    private long cacheAt;
 
     public RecitationStore(Context context) {
         this.context = context.getApplicationContext();
@@ -64,10 +70,27 @@ public final class RecitationStore {
 
     /** @return tous les versets audio trouvés, indexés par clé. */
     public Map<String, Uri> index() {
+        long now = SystemClock.elapsedRealtime();
+        if (cache != null && now - cacheAt < CACHE_MS) {
+            return cache;
+        }
         Map<String, Uri> found = new HashMap<>();
         scanTree(found);
         scanDefaultFolder(found);
+        // Dossier alimenté par le transfert automatique vers la carte.
+        File installed = AudioInstaller.targetFolder(context);
+        if (installed != null) {
+            scanFolder(installed, found);
+        }
+        cache = found;
+        cacheAt = now;
         return found;
+    }
+
+    /** À appeler après un changement de dossier ou un transfert. */
+    public void invalidate() {
+        cache = null;
+        cacheAt = 0L;
     }
 
     public Uri uriFor(String surahKey, int verseIndex) {
@@ -79,8 +102,11 @@ public final class RecitationStore {
     }
 
     private void scanDefaultFolder(Map<String, Uri> out) {
-        File dir = defaultFolder();
-        File[] files = dir.listFiles();
+        scanFolder(defaultFolder(), out);
+    }
+
+    private void scanFolder(File dir, Map<String, Uri> out) {
+        File[] files = dir == null ? null : dir.listFiles();
         if (files == null) {
             return;
         }
@@ -134,7 +160,7 @@ public final class RecitationStore {
     }
 
     /** « Fatiha_3.MP3 » -> « fatiha_3 » ; null si l'extension n'est pas audio. */
-    private static String baseName(String fileName) {
+    static String baseName(String fileName) {
         if (fileName == null) {
             return null;
         }

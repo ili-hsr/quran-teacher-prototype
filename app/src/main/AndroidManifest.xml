@@ -4,9 +4,16 @@
     <!-- Microphone : commandes vocales et, plus tard, écoute des récitations. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
+    <!-- Écriture sur la carte mémoire : nécessaire jusqu'à Android 9 inclus
+         pour copier les récitations livrées avec l'application. -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
+
     <application
         android:allowBackup="true"
         android:fullBackupContent="true"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">

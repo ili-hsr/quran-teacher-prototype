@@ -75,7 +75,9 @@ public class SettingsActivity extends BaseActivity {
         Ui.section(this, column, getString(R.string.audio_section));
         int count = recitations.availableCount();
         column.addView(Ui.body(this, getString(R.string.audio_folder_count, count)));
-        column.addView(Ui.primaryButton(this, getString(R.string.audio_choose_folder),
+        column.addView(Ui.primaryButton(this, getString(R.string.audio_install_button),
+                v -> installBundledAudio()));
+        column.addView(Ui.button(this, getString(R.string.audio_choose_folder),
                 v -> chooseAudioFolder()));
         column.addView(Ui.button(this, getString(R.string.btn_stop_audio),
                 v -> stopRecitation()));
@@ -96,6 +98,18 @@ public class SettingsActivity extends BaseActivity {
             column.addView(Ui.primaryButton(this, text, v -> action.run()));
         } else {
             column.addView(Ui.button(this, text, v -> action.run()));
+        }
+    }
+
+    @Override
+    protected void onAudioInstalled(AudioInstaller.Result result) {
+        super.onAudioInstalled(result);
+        new Handler(Looper.getMainLooper()).postDelayed(this::rebuildQuietly, RECREATE_DELAY_MS);
+    }
+
+    private void rebuildQuietly() {
+        if (!isFinishing()) {
+            recreate();
         }
     }
 
