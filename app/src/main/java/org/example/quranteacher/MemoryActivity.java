@@ -44,10 +44,17 @@ public class MemoryActivity extends BaseActivity {
 
         column.addView(labelView);
         column.addView(hintView);
-        column.addView(verseView);
+
+        LinearLayout verseCard = Ui.card(this);
+        verseCard.addView(verseView);
+        column.addView(verseCard);
         column.addView(repsView);
 
-        toggleButton = Ui.button(this, getString(R.string.btn_show_verse), v -> toggle());
+        column.addView(Ui.button(this, getString(R.string.btn_listen_verse),
+                v -> listen()));
+        column.addView(Ui.button(this, getString(R.string.btn_stop_audio),
+                v -> stopRecitation()));
+        toggleButton = Ui.primaryButton(this, getString(R.string.btn_show_verse), v -> toggle());
         column.addView(toggleButton);
         column.addView(Ui.button(this, getString(R.string.btn_recited), v -> markRecited()));
         column.addView(Ui.button(this, getString(R.string.btn_next_verse), v -> move(1)));
@@ -73,6 +80,10 @@ public class MemoryActivity extends BaseActivity {
             announce(teacherCtx.getString(R.string.teacher_verse_intro,
                     teacherCtx.getString(surah.nameRes), verseIndex + 1));
         }
+    }
+
+    private void listen() {
+        playVerse(QuranData.SURAHS[0], verseIndex);
     }
 
     private void toggle() {

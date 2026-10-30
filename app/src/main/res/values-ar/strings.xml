@@ -143,4 +143,12 @@
     <string-array name="cmd_no">
         <item>لا</item><item>خطأ</item><item>خطا</item>
     </string-array>
+    <string name="btn_stop_audio">إيقاف الصوت</string>
+    <string name="audio_section">التلاوات الصوتية</string>
+    <string name="audio_choose_folder">اختيار مجلد التلاوات</string>
+    <string name="audio_folder_count">الآيات الصوتية الموجودة: %1$d</string>
+    <string name="audio_folder_help">سمّي الملفات fatiha_1.mp3 و fatiha_2.mp3 وهكذا.</string>
+    <string name="audio_folder_default">المجلد الافتراضي: %1$s</string>
+    <string name="teacher_audio_not_found">ملف الصوت لهذه الآية غير موجود.</string>
+    <string name="teacher_audio_playing">هذه هي التلاوة.</string>
 </resources>

@@ -49,13 +49,18 @@ public class LessonActivity extends BaseActivity {
 
         column.addView(labelView);
         column.addView(counterView);
-        column.addView(verseView);
+
+        LinearLayout verseCard = Ui.card(this);
+        verseCard.addView(verseView);
+        column.addView(verseCard);
         column.addView(statusView);
         column.addView(repsView);
 
         column.addView(Ui.button(this, getString(R.string.btn_listen_verse),
-                v -> say(R.string.teacher_audio_missing)));
-        column.addView(Ui.button(this, getString(R.string.btn_next_verse),
+                v -> listen()));
+        column.addView(Ui.button(this, getString(R.string.btn_stop_audio),
+                v -> stopRecitation()));
+        column.addView(Ui.primaryButton(this, getString(R.string.btn_next_verse),
                 v -> move(1)));
         column.addView(Ui.button(this, getString(R.string.btn_prev_verse),
                 v -> move(-1)));
@@ -98,6 +103,10 @@ public class LessonActivity extends BaseActivity {
         }
         verseIndex = target;
         render(true);
+    }
+
+    private void listen() {
+        playVerse(QuranData.SURAHS[surahIndex], verseIndex);
     }
 
     private void markLearned() {

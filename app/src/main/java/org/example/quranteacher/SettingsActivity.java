@@ -6,15 +6,24 @@ import android.os.Looper;
 import android.widget.LinearLayout;
 
 /**
- * Paramètres : trois langues indépendantes (interface, professeur,
- * reconnaissance) et réglages de la voix.
+ * Paramètres : dix langues d'interface et dix langues de professeur, réglages
+ * de la voix, et le dossier des récitations audio.
  *
- * Chaque option est un gros bouton ; l'option active est annoncée comme
- * « choix actuel » par TalkBack.
+ * Chaque option est un gros bouton en verre ; l'option active est affichée en
+ * verre vert et annoncée comme « choix actuel » par TalkBack.
  */
 public class SettingsActivity extends BaseActivity {
 
     private static final long RECREATE_DELAY_MS = 1200L;
+
+    private static final String[] LANG_TAGS = {
+            "fr", "ar", "en", "nl", "es", "de", "it", "pt", "tr", "ur"
+    };
+    private static final int[] LANG_LABELS = {
+            R.string.lang_fr, R.string.lang_ar, R.string.lang_en, R.string.lang_nl,
+            R.string.lang_es, R.string.lang_de, R.string.lang_it, R.string.lang_pt,
+            R.string.lang_tr, R.string.lang_ur
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,21 +38,18 @@ public class SettingsActivity extends BaseActivity {
 
         Ui.section(this, column, getString(R.string.settings_interface_language));
         String ui = AppPrefs.uiLang(this);
-        addOption(column, getString(R.string.lang_fr), "fr".equals(ui), () -> setUiLang("fr"));
-        addOption(column, getString(R.string.lang_ar), "ar".equals(ui), () -> setUiLang("ar"));
-        addOption(column, getString(R.string.lang_en), "en".equals(ui), () -> setUiLang("en"));
-        addOption(column, getString(R.string.lang_nl), "nl".equals(ui), () -> setUiLang("nl"));
+        for (int i = 0; i < LANG_TAGS.length; i++) {
+            final String tag = LANG_TAGS[i];
+            addOption(column, getString(LANG_LABELS[i]), tag.equals(ui), () -> setUiLang(tag));
+        }
 
         Ui.section(this, column, getString(R.string.settings_teacher_language));
         String teacherLang = AppPrefs.teacherLang(this);
-        addOption(column, getString(R.string.lang_ar), "ar".equals(teacherLang),
-                () -> setTeacherLang("ar"));
-        addOption(column, getString(R.string.lang_fr), "fr".equals(teacherLang),
-                () -> setTeacherLang("fr"));
-        addOption(column, getString(R.string.lang_en), "en".equals(teacherLang),
-                () -> setTeacherLang("en"));
-        addOption(column, getString(R.string.lang_nl), "nl".equals(teacherLang),
-                () -> setTeacherLang("nl"));
+        for (int i = 0; i < LANG_TAGS.length; i++) {
+            final String tag = LANG_TAGS[i];
+            addOption(column, getString(LANG_LABELS[i]), tag.equals(teacherLang),
+                    () -> setTeacherLang(tag));
+        }
 
         Ui.section(this, column, getString(R.string.settings_teacher_voice));
         boolean voiceOn = AppPrefs.isTeacherOn(this);
@@ -64,8 +70,18 @@ public class SettingsActivity extends BaseActivity {
                 () -> setRecog("fr-FR"));
         addOption(column, getString(R.string.recog_ma), "ar-MA".equals(recog),
                 () -> setRecog("ar-MA"));
+        column.addView(Ui.meta(this, getString(R.string.settings_recognition_note)));
 
-        column.addView(Ui.body(this, getString(R.string.settings_recognition_note)));
+        Ui.section(this, column, getString(R.string.audio_section));
+        int count = recitations.availableCount();
+        column.addView(Ui.body(this, getString(R.string.audio_folder_count, count)));
+        column.addView(Ui.primaryButton(this, getString(R.string.audio_choose_folder),
+                v -> chooseAudioFolder()));
+        column.addView(Ui.button(this, getString(R.string.btn_stop_audio),
+                v -> stopRecitation()));
+        column.addView(Ui.meta(this, getString(R.string.audio_folder_help)));
+        column.addView(Ui.meta(this,
+                getString(R.string.audio_folder_default, recitations.defaultFolder().getAbsolutePath())));
 
         column.addView(Ui.button(this, getString(R.string.btn_test_voice),
                 v -> say(R.string.teacher_voice_test)));
@@ -76,7 +92,21 @@ public class SettingsActivity extends BaseActivity {
 
     private void addOption(LinearLayout column, String label, boolean current, Runnable action) {
         CharSequence text = current ? getString(R.string.current_choice, label) : label;
-        column.addView(Ui.button(this, text, v -> action.run()));
+        if (current) {
+            column.addView(Ui.primaryButton(this, text, v -> action.run()));
+        } else {
+            column.addView(Ui.button(this, text, v -> action.run()));
+        }
+    }
+
+    @Override
+    protected void onAudioFolderChosen() {
+        say(R.string.audio_folder_count, recitations.availableCount());
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (!isFinishing()) {
+                recreate();
+            }
+        }, RECREATE_DELAY_MS);
     }
 
     /** Confirme, puis recrée l'écran pour appliquer la nouvelle langue partout. */

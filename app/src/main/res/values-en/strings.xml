@@ -143,4 +143,12 @@
     <string-array name="cmd_no">
         <item>no</item><item>wrong</item><item>error</item>
     </string-array>
+    <string name="btn_stop_audio">Stop audio</string>
+    <string name="audio_section">Audio recitations</string>
+    <string name="audio_choose_folder">Choose the recitation folder</string>
+    <string name="audio_folder_count">Audio verses found: %1$d</string>
+    <string name="audio_folder_help">Name the files fatiha_1.mp3, fatiha_2.mp3 and so on.</string>
+    <string name="audio_folder_default">Default folder: %1$s</string>
+    <string name="teacher_audio_not_found">The audio file for this verse cannot be found.</string>
+    <string name="teacher_audio_playing">Here is the recitation.</string>
 </resources>

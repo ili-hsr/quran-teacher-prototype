@@ -69,7 +69,7 @@ public class ExamActivity extends BaseActivity {
 
         answerRow = new LinearLayout(this);
         answerRow.setOrientation(LinearLayout.VERTICAL);
-        answerRow.addView(Ui.button(this, getString(R.string.btn_correct), v -> answer(true)));
+        answerRow.addView(Ui.primaryButton(this, getString(R.string.btn_correct), v -> answer(true)));
         answerRow.addView(Ui.button(this, getString(R.string.btn_review), v -> answer(false)));
         column.addView(answerRow);
 

@@ -143,4 +143,12 @@
     <string-array name="cmd_no">
         <item>nee</item><item>fout</item><item>verkeerd</item>
     </string-array>
+    <string name="btn_stop_audio">Audio stoppen</string>
+    <string name="audio_section">Audio-recitaties</string>
+    <string name="audio_choose_folder">Kies de map met recitaties</string>
+    <string name="audio_folder_count">Gevonden audioverzen: %1$d</string>
+    <string name="audio_folder_help">Noem de bestanden fatiha_1.mp3, fatiha_2.mp3 enzovoort.</string>
+    <string name="audio_folder_default">Standaardmap: %1$s</string>
+    <string name="teacher_audio_not_found">Het audiobestand van deze vers is niet gevonden.</string>
+    <string name="teacher_audio_playing">Hier is de recitatie.</string>
 </resources>

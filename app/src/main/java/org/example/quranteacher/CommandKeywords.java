@@ -32,7 +32,7 @@ public final class CommandKeywords {
     public static final String YES = "yes";
     public static final String NO = "no";
 
-    private static final String[] LOCALES = {"fr", "ar", "en", "nl"};
+    private static final String[] LOCALES = {"fr", "ar", "en", "nl", "es", "de", "it", "pt", "tr", "ur"};
 
     private static final String[] ACTIONS = {
             HOME, LESSONS, MEMORY, EXAM, PROGRESS, SETTINGS,

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -31,12 +32,15 @@ import java.util.ArrayList;
 public abstract class BaseActivity extends Activity {
 
     private static final int REQ_MIC = 210;
+    private static final int REQ_TREE = 220;
     /** Laisse la consigne se terminer avant d'ouvrir le micro. */
     private static final long LISTEN_DELAY_MS = 1100L;
 
     protected TeacherVoice teacher;
     protected Context teacherCtx;
     protected ProgressStore progress;
+    protected RecitationStore recitations;
+    protected RecitationPlayer player;
 
     private SpeechRecognizer recognizer;
     private long learningStart = 0L;
@@ -50,6 +54,10 @@ public abstract class BaseActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         progress = new ProgressStore(this);
+        recitations = new RecitationStore(this);
+        player = new RecitationPlayer(this);
+        // Fond « aurore » : c'est lui qui donne sa matière au verre des boutons.
+        getWindow().setBackgroundDrawable(new AuraBackground());
         teacherCtx = AppPrefs.teacherContext(this);
         teacher = new TeacherVoice(
                 getApplicationContext(),
@@ -316,6 +324,75 @@ public abstract class BaseActivity extends Activity {
         say(R.string.teacher_not_understood);
     }
 
+    // --- Récitations audio (fichiers authentiques, jamais de synthèse) -----
+
+    /** Joue la récitation d'un verset si le fichier existe. */
+    protected void playVerse(QuranData.Surah surah, int verseIndex) {
+        Uri uri = recitations.uriFor(surah.key, verseIndex);
+        if (uri == null) {
+            say(R.string.teacher_audio_not_found);
+            return;
+        }
+        say(R.string.teacher_audio_playing);
+        player.play(uri, new RecitationPlayer.Listener() {
+            @Override
+            public void onFinished() {
+                onRecitationFinished();
+            }
+
+            @Override
+            public void onFailed() {
+                say(R.string.teacher_audio_not_found);
+            }
+        });
+    }
+
+    protected void stopRecitation() {
+        if (player != null) {
+            player.stop();
+        }
+    }
+
+    /** Appelé quand une récitation se termine (surchargé au besoin). */
+    protected void onRecitationFinished() {
+    }
+
+    /** Choix du dossier contenant les fichiers audio (une seule fois). */
+    protected void chooseAudioFolder() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION
+                | Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+        try {
+            startActivityForResult(intent, REQ_TREE);
+        } catch (Exception e) {
+            say(R.string.teacher_audio_not_found);
+        }
+    }
+
+    protected void onAudioFolderChosen() {
+        say(R.string.audio_folder_count, recitations.availableCount());
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode != REQ_TREE || resultCode != RESULT_OK || data == null) {
+            return;
+        }
+        Uri tree = data.getData();
+        if (tree == null) {
+            return;
+        }
+        try {
+            getContentResolver().takePersistableUriPermission(
+                    tree, Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        } catch (Exception ignored) {
+            // Certains fournisseurs ne persistent pas : lecture tant que l'app vit.
+        }
+        recitations.setTreeUri(tree.toString());
+        onAudioFolderChosen();
+    }
+
     // --- Cycle de vie ------------------------------------------------------
 
     @Override
@@ -334,6 +411,9 @@ public abstract class BaseActivity extends Activity {
         if (teacher != null) {
             teacher.stop();
         }
+        if (player != null) {
+            player.stop();
+        }
         if (recognizer != null) {
             try {
                 recognizer.cancel();
@@ -344,6 +424,9 @@ public abstract class BaseActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        if (player != null) {
+            player.stop();
+        }
         if (teacher != null) {
             teacher.shutdown();
             teacher = null;

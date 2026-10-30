@@ -70,6 +70,12 @@
     <string name="lang_ar">Arabe</string>
     <string name="lang_en">Anglais</string>
     <string name="lang_nl">Néerlandais</string>
+    <string name="lang_es">Español</string>
+    <string name="lang_de">Deutsch</string>
+    <string name="lang_it">Italiano</string>
+    <string name="lang_pt">Português</string>
+    <string name="lang_tr">Türkçe</string>
+    <string name="lang_ur">اردو</string>
     <string name="recog_ar">Arabe standard</string>
     <string name="recog_fr">Français</string>
     <string name="recog_ma">Darija marocaine</string>
@@ -151,4 +157,12 @@
     <string-array name="cmd_no">
         <item>non</item><item>faux</item><item>erreur</item>
     </string-array>
+    <string name="btn_stop_audio">Arrêter l\'audio</string>
+    <string name="audio_section">Récitations audio</string>
+    <string name="audio_choose_folder">Choisir le dossier des récitations</string>
+    <string name="audio_folder_count">Versets audio trouvés : %1$d</string>
+    <string name="audio_folder_help">Nomme les fichiers fatiha_1.mp3, fatiha_2.mp3, puis ainsi de suite.</string>
+    <string name="audio_folder_default">Dossier par défaut : %1$s</string>
+    <string name="teacher_audio_not_found">Le fichier audio de ce verset est introuvable.</string>
+    <string name="teacher_audio_playing">Voici la récitation.</string>
 </resources>
