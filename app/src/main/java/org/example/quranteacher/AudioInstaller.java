@@ -49,7 +49,7 @@ public final class AudioInstaller {
         }
     }
 
-    private static final String ASSET_DIR = "quran";
+    private static final String ASSET_DIR = "recitations";
     private static final String PREFS = "quran_audio_install";
     private static final String K_INSTALLED = "installed_v1";
     private static final String K_PATH = "path";
@@ -83,7 +83,16 @@ public final class AudioInstaller {
     public static List<String> bundleTracks(Context context) {
         try {
             String[] names = context.getAssets().list(ASSET_DIR);
-            return names == null ? new ArrayList<>() : new ArrayList<>(Arrays.asList(names));
+            List<String> tracks = new ArrayList<>();
+            if (names != null) {
+                for (String name : names) {
+                    String lower = name.toLowerCase(java.util.Locale.ROOT);
+                    if (lower.endsWith(".mp3") || lower.endsWith(".ogg") || lower.endsWith(".m4a")) {
+                        tracks.add(name);
+                    }
+                }
+            }
+            return tracks;
         } catch (Exception e) {
             return new ArrayList<>();
         }

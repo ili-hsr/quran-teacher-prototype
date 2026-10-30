@@ -159,4 +159,13 @@
     <string name="audio_install_no_sd">بطاقة الذاكرة غير متاحة: ستُحفظ التلاوات في ذاكرة التطبيق.</string>
     <string name="audio_install_permission">بدون صلاحية التخزين لا يمكن نسخ التلاوات إلى البطاقة.</string>
     <string name="exam_summary">انتهى الامتحان: %1$d إجابات صحيحة من %2$d.</string>
+    <string name="screen_surahs">السور</string>
+    <string name="btn_choose_surah">اختيار سورة</string>
+    <string name="surah_item">%1$s — %2$d آية</string>
+    <string name="surah_list_help">114 سورة و6236 آية. اختر سورة لتعلّمها.</string>
+    <string name="teacher_surah_list_intro">قائمة السور. القرآن فيه %1$d آية. اختر سورة.</string>
+    <string name="reciter_section">القارئ</string>
+    <string name="reciter_main">المجلد الرئيسي</string>
+    <string name="reciter_none">لم يُعثر على قارئ. أنشئ مجلداً باسم القارئ وضع فيه الملفات.</string>
+    <string name="teacher_reciter_selected">القارئ: %1$s.</string>
 </resources>

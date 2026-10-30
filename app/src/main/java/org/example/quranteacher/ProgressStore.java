@@ -74,6 +74,17 @@ public final class ProgressStore {
         return count;
     }
 
+    /** Clés de tous les versets marqués comme appris. */
+    public java.util.List<String> learnedKeys() {
+        java.util.List<String> keys = new java.util.ArrayList<>();
+        for (Map.Entry<String, ?> entry : prefs.getAll().entrySet()) {
+            if (entry.getKey().startsWith("learned_") && Boolean.TRUE.equals(entry.getValue())) {
+                keys.add(entry.getKey().substring("learned_".length()));
+            }
+        }
+        return keys;
+    }
+
     // --- Compteurs globaux -------------------------------------------------
 
     public int totalRepetitions() {

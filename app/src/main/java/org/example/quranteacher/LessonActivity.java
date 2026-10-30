@@ -13,6 +13,9 @@ import android.widget.TextView;
  */
 public class LessonActivity extends BaseActivity {
 
+    /** Index de sourate à ouvrir, transmis par la liste des sourates. */
+    public static final String EXTRA_SURAH = "lesson_surah_index";
+
     private static final String K_SURAH = "lesson_surah";
     private static final String K_VERSE = "lesson_verse";
 
@@ -32,6 +35,12 @@ public class LessonActivity extends BaseActivity {
         if (savedInstanceState != null) {
             surahIndex = savedInstanceState.getInt(K_SURAH, 0);
             verseIndex = savedInstanceState.getInt(K_VERSE, 0);
+        } else {
+            surahIndex = getIntent().getIntExtra(EXTRA_SURAH, 0);
+        }
+        if (QuranData.surah(surahIndex) == null) {
+            surahIndex = 0;
+            verseIndex = 0;
         }
         buildScreen();
         render(true);
@@ -72,8 +81,8 @@ public class LessonActivity extends BaseActivity {
     }
 
     private void render(boolean speak) {
-        QuranData.Surah surah = QuranData.SURAHS[surahIndex];
-        String surahName = getString(surah.nameRes);
+        QuranData.Surah surah = QuranData.surah(surahIndex);
+        String surahName = surah.latinLabel();
 
         labelView.setText(getString(R.string.verse_label, surahName, verseIndex + 1));
         counterView.setText(getString(R.string.verse_counter, verseIndex + 1, surah.verseCount()));
@@ -86,12 +95,12 @@ public class LessonActivity extends BaseActivity {
 
         if (speak) {
             announce(teacherCtx.getString(R.string.teacher_verse_intro,
-                    teacherCtx.getString(surah.nameRes), verseIndex + 1));
+                    surah.latinLabel(), verseIndex + 1));
         }
     }
 
     private void move(int delta) {
-        QuranData.Surah surah = QuranData.SURAHS[surahIndex];
+        QuranData.Surah surah = QuranData.surah(surahIndex);
         int target = verseIndex + delta;
         if (target < 0) {
             say(R.string.teacher_verse_first);
@@ -106,11 +115,11 @@ public class LessonActivity extends BaseActivity {
     }
 
     private void listen() {
-        playVerse(QuranData.SURAHS[surahIndex], verseIndex);
+        playVerse(QuranData.surah(surahIndex), verseIndex);
     }
 
     private void markLearned() {
-        QuranData.Surah surah = QuranData.SURAHS[surahIndex];
+        QuranData.Surah surah = QuranData.surah(surahIndex);
         String key = surah.verseKey(verseIndex);
         progress.setLearned(key, true);
         progress.addRepetition(key);

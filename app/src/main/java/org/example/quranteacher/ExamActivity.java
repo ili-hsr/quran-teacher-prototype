@@ -44,9 +44,20 @@ public class ExamActivity extends BaseActivity {
 
     private void buildQuestions() {
         List<int[]> pool = new ArrayList<>();
-        for (int s = 0; s < QuranData.SURAHS.length; s++) {
-            for (int v = 0; v < QuranData.SURAHS[s].verseCount(); v++) {
-                pool.add(new int[]{s, v});
+        // L'examen ne porte que sur ce qui a été marqué comme appris ;
+        // sinon sur la première sourate, pour rester utile dès le début.
+        for (String key : progress.learnedKeys()) {
+            int[] position = QuranData.locate(key);
+            if (position != null) {
+                pool.add(position);
+            }
+        }
+        if (pool.isEmpty()) {
+            QuranData.Surah first = QuranData.surah(0);
+            if (first != null) {
+                for (int v = 0; v < first.verseCount(); v++) {
+                    pool.add(new int[]{0, v});
+                }
             }
         }
         Collections.shuffle(pool, new Random());
@@ -90,14 +101,14 @@ public class ExamActivity extends BaseActivity {
             return;
         }
         int[] position = questions.get(questionIndex);
-        QuranData.Surah surah = QuranData.SURAHS[position[0]];
+        QuranData.Surah surah = QuranData.surah(position[0]);
         questionView.setText(getString(R.string.verse_label,
-                getString(surah.nameRes), position[1] + 1));
+                surah.latinLabel(), position[1] + 1));
         progressView.setText(getString(R.string.verse_counter,
                 questionIndex + 1, questions.size()));
         if (speak) {
             announce(teacherCtx.getString(R.string.teacher_exam_question,
-                    teacherCtx.getString(surah.nameRes), position[1] + 1));
+                    teacherCtx.surah.latinLabel(), position[1] + 1));
         }
     }
 
@@ -125,7 +136,8 @@ public class ExamActivity extends BaseActivity {
             return "fatiha_1";
         }
         int[] position = questions.get(questionIndex);
-        return QuranData.SURAHS[position[0]].verseKey(position[1]);
+        QuranData.Surah surah = QuranData.surah(position[0]);
+        return surah == null ? "" : surah.verseKey(position[1]);
     }
 
     private void finishExam() {

@@ -8,27 +8,35 @@ import android.os.SystemClock;
 import android.provider.DocumentsContract;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 /**
- * Index des récitations audio disponibles sur le téléphone.
+ * Index des récitations présentes sur le téléphone.
  *
- * Aucun verset n'est jamais prononcé par la synthèse vocale : le son vient
- * uniquement de fichiers posés par la famille, sur la carte SD ou dans un
- * dossier choisi une seule fois.
+ * Deux façons de nommer, reconnues en même temps :
+ *   1. à plat          : 002_255.mp3
+ *   2. par récitateur  : Alafasy/002_255.mp3
  *
- * Convention de nommage : <sourate>_<numéro>.<ext>
- *   fatiha_1.mp3, fatiha_2.mp3 ... fatiha_7.mp3
- * Extensions reconnues : mp3, ogg, m4a, aac, wav, opus.
+ * La seconde est celle qui permettra le site : chacun télécharge le dossier de
+ * son récitateur préféré, l'application le détecte et propose le choix. Un
+ * fichier à la racine reste toujours accepté comme solution de repli.
+ *
+ * Aucun verset n'est jamais prononcé par la synthèse vocale.
  */
 public final class RecitationStore {
 
     private static final String KEY_TREE = "audio_tree_uri";
+    private static final String KEY_RECITER = "reciter";
     private static final String[] EXTENSIONS = {"mp3", "ogg", "m4a", "aac", "wav", "opus"};
-
-    /** L'index est réutilisé 20 s : un scan de carte à chaque appui coûterait cher. */
+    private static final String SEP = "|";
     private static final long CACHE_MS = 20000L;
 
     private final Context context;
@@ -41,9 +49,7 @@ public final class RecitationStore {
         this.prefs = AppPrefs.get(context);
     }
 
-    public boolean hasFolder() {
-        return !treeUri().isEmpty();
-    }
+    // --- Dossiers ----------------------------------------------------------
 
     public String treeUri() {
         return prefs.getString(KEY_TREE, "");
@@ -51,24 +57,37 @@ public final class RecitationStore {
 
     public void setTreeUri(String uri) {
         prefs.edit().putString(KEY_TREE, uri == null ? "" : uri).commit();
+        invalidate();
     }
 
-    public void clearFolder() {
-        prefs.edit().remove(KEY_TREE).commit();
-    }
-
-    /** Dossier par défaut, utilisable sans permission : Android/data/.../files/quran */
     public File defaultFolder() {
         File dir = context.getExternalFilesDir(null);
         return dir == null ? new File(context.getFilesDir(), "quran") : new File(dir, "quran");
     }
 
-    /** Clé attendue pour un verset, ex. « fatiha_3 ». */
-    public static String key(String surahKey, int verseIndex) {
-        return surahKey + "_" + (verseIndex + 1);
+    // --- Récitateur actif --------------------------------------------------
+
+    public String activeReciter() {
+        return prefs.getString(KEY_RECITER, "");
     }
 
-    /** @return tous les versets audio trouvés, indexés par clé. */
+    public void setActiveReciter(String reciter) {
+        prefs.edit().putString(KEY_RECITER, reciter == null ? "" : reciter).commit();
+    }
+
+    /** Noms des récitateurs trouvés ("" = fichiers à la racine). */
+    public List<String> reciters() {
+        Set<String> names = new LinkedHashSet<>();
+        for (String composite : index().keySet()) {
+            names.add(composite.substring(0, composite.indexOf(SEP)));
+        }
+        List<String> out = new ArrayList<>(names);
+        Collections.sort(out);
+        return out;
+    }
+
+    // --- Index -------------------------------------------------------------
+
     public Map<String, Uri> index() {
         long now = SystemClock.elapsedRealtime();
         if (cache != null && now - cacheAt < CACHE_MS) {
@@ -76,47 +95,89 @@ public final class RecitationStore {
         }
         Map<String, Uri> found = new HashMap<>();
         scanTree(found);
-        scanDefaultFolder(found);
-        // Dossier alimenté par le transfert automatique vers la carte.
         File installed = AudioInstaller.targetFolder(context);
         if (installed != null) {
-            scanFolder(installed, found);
+            scanFolder(installed, "", found, 0);
         }
+        scanFolder(defaultFolder(), "", found, 0);
         cache = found;
         cacheAt = now;
         return found;
     }
 
-    /** À appeler après un changement de dossier ou un transfert. */
     public void invalidate() {
         cache = null;
         cacheAt = 0L;
     }
 
-    public Uri uriFor(String surahKey, int verseIndex) {
-        return index().get(key(surahKey, verseIndex));
+    public Uri uriFor(QuranData.Surah surah, int verseIndex) {
+        if (surah == null) {
+            return null;
+        }
+        Map<String, Uri> all = index();
+        String[] names = {
+                surah.key + "_" + (verseIndex + 1),
+                surah.alias + "_" + (verseIndex + 1)
+        };
+        String active = activeReciter();
+        for (String name : names) {
+            Uri uri = all.get(active + SEP + name);
+            if (uri != null) {
+                return uri;
+            }
+        }
+        for (String name : names) {
+            Uri uri = all.get(SEP + name);
+            if (uri != null) {
+                return uri;
+            }
+        }
+        for (String name : names) {
+            for (Map.Entry<String, Uri> entry : all.entrySet()) {
+                if (entry.getKey().endsWith(SEP + name)) {
+                    return entry.getValue();
+                }
+            }
+        }
+        return null;
     }
 
+    /** Nombre de versets disponibles pour le récitateur actif. */
     public int availableCount() {
-        return index().size();
+        Set<String> names = new HashSet<>();
+        String active = activeReciter();
+        for (String composite : index().keySet()) {
+            int cut = composite.indexOf(SEP);
+            String reciter = composite.substring(0, cut);
+            if (reciter.isEmpty() || reciter.equals(active)) {
+                names.add(composite.substring(cut + 1));
+            }
+        }
+        return names.size();
     }
 
-    private void scanDefaultFolder(Map<String, Uri> out) {
-        scanFolder(defaultFolder(), out);
-    }
+    // --- Analyse du disque -------------------------------------------------
 
-    private void scanFolder(File dir, Map<String, Uri> out) {
+    private void scanFolder(File dir, String reciter, Map<String, Uri> out, int depth) {
         File[] files = dir == null ? null : dir.listFiles();
         if (files == null) {
             return;
         }
         for (File file : files) {
-            if (!file.isFile()) {
+            if (file.isDirectory()) {
+                // Un sous-dossier = un récitateur (un seul niveau).
+                if (depth == 0) {
+                    scanFolder(file, file.getName(), out, 1);
+                }
                 continue;
             }
             String name = baseName(file.getName());
-            if (name != null && !out.containsKey(name)) {
-                out.put(name, Uri.fromFile(file));
+            if (name == null) {
+                continue;
+            }
+            String composite = reciter + SEP + name;
+            if (!out.containsKey(composite)) {
+                out.put(composite, Uri.fromFile(file));
             }
         }
     }
@@ -129,37 +190,52 @@ public final class RecitationStore {
         Uri treeUri = Uri.parse(tree);
         try {
             String rootId = DocumentsContract.getTreeDocumentId(treeUri);
-            Uri children = DocumentsContract.buildChildDocumentsUriUsingTree(treeUri, rootId);
-            Cursor cursor = context.getContentResolver().query(
-                    children,
-                    new String[]{
-                            DocumentsContract.Document.COLUMN_DOCUMENT_ID,
-                            DocumentsContract.Document.COLUMN_DISPLAY_NAME
-                    },
-                    null, null, null);
-            if (cursor == null) {
-                return;
-            }
-            try {
-                while (cursor.moveToNext()) {
-                    String docId = cursor.getString(0);
-                    String displayName = cursor.getString(1);
-                    String name = baseName(displayName);
-                    if (name == null || out.containsKey(name)) {
-                        continue;
-                    }
-                    out.put(name,
-                            DocumentsContract.buildDocumentUriUsingTree(treeUri, docId));
-                }
-            } finally {
-                cursor.close();
-            }
+            scanTreeChildren(treeUri, rootId, "", out, 0);
         } catch (Exception ignored) {
-            // Dossier inaccessible (carte retirée, permission expirée) : on ignore.
+            // Dossier inaccessible : carte retirée ou permission expirée.
         }
     }
 
-    /** « Fatiha_3.MP3 » -> « fatiha_3 » ; null si l'extension n'est pas audio. */
+    private void scanTreeChildren(Uri treeUri, String parentId, String reciter,
+                                  Map<String, Uri> out, int depth) {
+        Uri children = DocumentsContract.buildChildDocumentsUriUsingTree(treeUri, parentId);
+        Cursor cursor = context.getContentResolver().query(
+                children,
+                new String[]{
+                        DocumentsContract.Document.COLUMN_DOCUMENT_ID,
+                        DocumentsContract.Document.COLUMN_DISPLAY_NAME,
+                        DocumentsContract.Document.COLUMN_MIME_TYPE
+                },
+                null, null, null);
+        if (cursor == null) {
+            return;
+        }
+        try {
+            while (cursor.moveToNext()) {
+                String docId = cursor.getString(0);
+                String displayName = cursor.getString(1);
+                String mime = cursor.getString(2);
+                if (DocumentsContract.Document.MIME_TYPE_DIR.equals(mime)) {
+                    if (depth == 0) {
+                        scanTreeChildren(treeUri, docId, displayName, out, 1);
+                    }
+                    continue;
+                }
+                String name = baseName(displayName);
+                if (name == null) {
+                    continue;
+                }
+                String composite = reciter + SEP + name;
+                if (!out.containsKey(composite)) {
+                    out.put(composite, DocumentsContract.buildDocumentUriUsingTree(treeUri, docId));
+                }
+            }
+        } finally {
+            cursor.close();
+        }
+    }
+
+    /** « 001_5.MP3 » -> « 001_5 » ; null si ce n'est pas un fichier audio. */
     static String baseName(String fileName) {
         if (fileName == null) {
             return null;

@@ -26,6 +26,8 @@ public class MainActivity extends BaseActivity {
 
         column.addView(Ui.primaryButton(this, getString(R.string.btn_start_session),
                 v -> openScreen(LessonActivity.class)));
+        column.addView(Ui.button(this, getString(R.string.btn_choose_surah),
+                v -> openScreen(SurahListActivity.class)));
         column.addView(Ui.button(this, getString(R.string.btn_lessons),
                 v -> openScreen(LessonActivity.class)));
         column.addView(Ui.button(this, getString(R.string.btn_memory),

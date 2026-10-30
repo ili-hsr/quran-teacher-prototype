@@ -27,6 +27,8 @@ android {
 
 dependencies {
     testImplementation 'junit:junit:4.13.2'
+    // vraie implémentation JSON pour les tests JVM (android.jar est un stub)
+    testImplementation 'org.json:json:20240303'
 }
 
 // La CI lance `assembleDebug` : on y rattache les tests JVM pour qu'ils

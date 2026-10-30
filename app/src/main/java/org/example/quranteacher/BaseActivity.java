@@ -54,6 +54,7 @@ public abstract class BaseActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        QuranData.ensureLoaded(this);
         progress = new ProgressStore(this);
         recitations = new RecitationStore(this);
         player = new RecitationPlayer(this);
@@ -338,7 +339,7 @@ public abstract class BaseActivity extends Activity {
 
     /** Joue la récitation d'un verset si le fichier existe. */
     protected void playVerse(QuranData.Surah surah, int verseIndex) {
-        Uri uri = recitations.uriFor(surah.key, verseIndex);
+        Uri uri = recitations.uriFor(surah, verseIndex);
         if (uri == null) {
             say(R.string.teacher_audio_not_found);
             return;

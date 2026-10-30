@@ -12,6 +12,7 @@ public class MemoryActivity extends BaseActivity {
 
     private static final String K_VERSE = "memory_verse";
 
+    private int surahIndex = 0;
     private int verseIndex = 0;
     private boolean visible = false;
 
@@ -26,8 +27,15 @@ public class MemoryActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setTitle(getString(R.string.screen_memory));
         if (savedInstanceState != null) {
+            surahIndex = savedInstanceState.getInt("memory_surah", 0);
             verseIndex = savedInstanceState.getInt(K_VERSE, 0);
             visible = savedInstanceState.getBoolean("memory_visible", false);
+        } else {
+            surahIndex = getIntent().getIntExtra(LessonActivity.EXTRA_SURAH, 0);
+        }
+        if (QuranData.surah(surahIndex) == null) {
+            surahIndex = 0;
+            verseIndex = 0;
         }
         buildScreen();
         render(true);
@@ -65,7 +73,7 @@ public class MemoryActivity extends BaseActivity {
     }
 
     private void render(boolean speak) {
-        QuranData.Surah surah = QuranData.SURAHS[0];
+        QuranData.Surah surah = QuranData.surah(surahIndex);
         labelView.setText(getString(R.string.verse_label,
                 getString(surah.nameRes), verseIndex + 1));
         verseView.setText(visible ? surah.verses[verseIndex] : "•••");
@@ -83,7 +91,7 @@ public class MemoryActivity extends BaseActivity {
     }
 
     private void listen() {
-        playVerse(QuranData.SURAHS[0], verseIndex);
+        playVerse(QuranData.surah(surahIndex), verseIndex);
     }
 
     private void toggle() {
@@ -93,7 +101,7 @@ public class MemoryActivity extends BaseActivity {
     }
 
     private void markRecited() {
-        QuranData.Surah surah = QuranData.SURAHS[0];
+        QuranData.Surah surah = QuranData.surah(surahIndex);
         String key = surah.verseKey(verseIndex);
         progress.addRepetition(key);
         progress.markReviewed(key);
@@ -105,7 +113,7 @@ public class MemoryActivity extends BaseActivity {
     }
 
     private void move(int delta) {
-        QuranData.Surah surah = QuranData.SURAHS[0];
+        QuranData.Surah surah = QuranData.surah(surahIndex);
         int target = verseIndex + delta;
         if (target < 0 || target >= surah.verseCount()) {
             say(delta > 0 ? R.string.teacher_verse_last : R.string.teacher_verse_first);
@@ -144,6 +152,7 @@ public class MemoryActivity extends BaseActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        outState.putInt("memory_surah", surahIndex);
         outState.putInt(K_VERSE, verseIndex);
         outState.putBoolean("memory_visible", visible);
     }

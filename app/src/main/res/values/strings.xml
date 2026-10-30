@@ -173,4 +173,13 @@
     <string name="audio_install_no_sd">La carte mémoire n\'est pas accessible : les récitations vont dans la mémoire de l\'application.</string>
     <string name="audio_install_permission">Sans accès au stockage, les récitations ne peuvent pas être copiées sur la carte.</string>
     <string name="exam_summary">Examen terminé : %1$d bonnes réponses sur %2$d.</string>
+    <string name="screen_surahs">Sourates</string>
+    <string name="btn_choose_surah">Choisir une sourate</string>
+    <string name="surah_item">%1$s — %2$d versets</string>
+    <string name="surah_list_help">114 sourates, 6236 versets. Choisis une sourate pour l\'apprendre.</string>
+    <string name="teacher_surah_list_intro">Liste des sourates. Le Coran compte %1$d versets. Choisis une sourate.</string>
+    <string name="reciter_section">Récitateur</string>
+    <string name="reciter_main">Dossier principal</string>
+    <string name="reciter_none">Aucun récitateur détecté. Crée un dossier au nom du récitateur et place les fichiers dedans.</string>
+    <string name="teacher_reciter_selected">Récitateur : %1$s.</string>
 </resources>

@@ -72,6 +72,19 @@ public class SettingsActivity extends BaseActivity {
                 () -> setRecog("ar-MA"));
         column.addView(Ui.meta(this, getString(R.string.settings_recognition_note)));
 
+        Ui.section(this, column, getString(R.string.reciter_section));
+        java.util.List<String> reciters = recitations.reciters();
+        if (reciters.isEmpty()) {
+            column.addView(Ui.meta(this, getString(R.string.reciter_none)));
+        } else {
+            String active = recitations.activeReciter();
+            for (String reciter : reciters) {
+                final String value = reciter;
+                String label = reciter.isEmpty() ? getString(R.string.reciter_main) : reciter;
+                addOption(column, label, reciter.equals(active), () -> setReciter(value));
+            }
+        }
+
         Ui.section(this, column, getString(R.string.audio_section));
         int count = recitations.availableCount();
         column.addView(Ui.body(this, getString(R.string.audio_folder_count, count)));
@@ -153,6 +166,13 @@ public class SettingsActivity extends BaseActivity {
 
     private void setRate(int index) {
         AppPrefs.setTeacherRateIndex(this, index);
+        confirmAndRecreate();
+    }
+
+    private void setReciter(String reciter) {
+        recitations.setActiveReciter(reciter);
+        say(R.string.teacher_reciter_selected,
+                reciter.isEmpty() ? getString(R.string.reciter_main) : reciter);
         confirmAndRecreate();
     }
 
