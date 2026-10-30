@@ -75,7 +75,7 @@ public class MemoryActivity extends BaseActivity {
     private void render(boolean speak) {
         QuranData.Surah surah = QuranData.surah(surahIndex);
         labelView.setText(getString(R.string.verse_label,
-                getString(surah.nameRes), verseIndex + 1));
+                surah.latinLabel(), verseIndex + 1));
         verseView.setText(visible ? surah.verses[verseIndex] : "•••");
         toggleButton.setText(visible
                 ? getString(R.string.btn_hide_verse)
@@ -86,7 +86,7 @@ public class MemoryActivity extends BaseActivity {
 
         if (speak) {
             announce(teacherCtx.getString(R.string.teacher_verse_intro,
-                    teacherCtx.getString(surah.nameRes), verseIndex + 1));
+                    surah.latinLabel(), verseIndex + 1));
         }
     }
 

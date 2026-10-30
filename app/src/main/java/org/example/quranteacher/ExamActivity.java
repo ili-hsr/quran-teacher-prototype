@@ -108,7 +108,7 @@ public class ExamActivity extends BaseActivity {
                 questionIndex + 1, questions.size()));
         if (speak) {
             announce(teacherCtx.getString(R.string.teacher_exam_question,
-                    teacherCtx.surah.latinLabel(), position[1] + 1));
+                    surah.latinLabel(), position[1] + 1));
         }
     }
 
