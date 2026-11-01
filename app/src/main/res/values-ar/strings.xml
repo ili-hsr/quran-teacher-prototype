@@ -185,4 +185,14 @@
     <string name="check_result_partial">قريب. تم التعرف على %1$d من %2$d، وهناك كلمات ناقصة.</string>
     <string name="check_result_none">لم أتعرف على الآية. %1$d كلمة من %2$d.</string>
     <string name="teacher_no_model">نموذج التعرف الصوتي غير مثبّت.</string>
+    <string name="screen_recite">التلاوة</string>
+    <string name="btn_recite">التلاوة مع الأستاذ</string>
+    <string name="btn_restart_verse">إعادة الآية</string>
+    <string name="recite_intro">اسمعي الآية ثم اقرئيها. سأوقفك عند أول خطأ.</string>
+    <string name="recite_listening">أنا أسمعك. اقرئي.</string>
+    <string name="recite_done">أحسنت، الآية كاملة.</string>
+    <string name="recite_resume">اسمعي ثم أكملي.</string>
+    <string name="recite_omission">تجاوزت الكلمة رقم %1$d.</string>
+    <string name="recite_wrong">خطأ في الكلمة رقم %1$d.</string>
+    <string name="recite_progress">الكلمة %1$d من %2$d.</string>
 </resources>

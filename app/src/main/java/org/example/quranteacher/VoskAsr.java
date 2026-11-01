@@ -12,17 +12,17 @@ import org.vosk.android.SpeechService;
 
 import java.io.File;
 
-/**
- * Reconnaissance vocale locale (Vosk), sans Internet et sans service Google.
- *
- * Le moteur est chargé à la première utilisation puis relâché quand on quitte
- * l'écran : sur un téléphone de 2 Go, garder le modèle en mémoire n'est pas
- * raisonnable.
- */
+/** Moteur de reconnaissance hors ligne (Vosk). */
 public final class VoskAsr implements RecognitionListener {
 
     public interface Callback {
         void onText(String text);
+        void onFailed(String message);
+    }
+
+    public interface Stream {
+        void onPartial(String text);
+        void onFinal(String text);
         void onFailed(String message);
     }
 
@@ -31,20 +31,34 @@ public final class VoskAsr implements RecognitionListener {
     private Recognizer recognizer;
     private SpeechService service;
     private Callback callback;
+    private Stream stream;
+    private boolean running;
     private String last = "";
-    private boolean loading = false;
 
     public boolean isBusy() {
-        return loading;
+        return running;
     }
 
-    public void listen(final Context context, final String tag, Callback cb) {
-        callback = cb;
-        if (loading) return;
-        loading = true;
+    public void listen(final Context context, final String tag, final Callback cb) {
+        this.callback = cb;
+        this.stream = null;
+        startEngine(context, tag);
+    }
+
+    public void listenStream(final Context context, final String tag, final Stream st) {
+        this.stream = st;
+        this.callback = null;
+        startEngine(context, tag);
+    }
+
+    private void startEngine(final Context context, final String tag) {
+        if (running) {
+            return;
+        }
+        running = true;
         last = "";
         if (service != null) {
-            service.startListening(this);
+            main.post(this::beginListening);
             return;
         }
         new Thread(() -> {
@@ -53,112 +67,156 @@ public final class VoskAsr implements RecognitionListener {
                 model = new Model(dir.getAbsolutePath());
                 recognizer = new Recognizer(model, 16000.0f);
                 service = new SpeechService(recognizer, 16000.0f);
-                main.post(() -> {
-                    try {
-                        service.startListening(VoskAsr.this);
-                    } catch (Exception e) {
-                        loading = false;
-                        fail("micro indisponible");
-                    }
-                });
+                main.post(this::beginListening);
             } catch (Throwable t) {
-                loading = false;
+                running = false;
                 main.post(() -> fail(String.valueOf(t.getMessage())));
             }
         }, "vosk-init").start();
     }
 
-    private void fail(String message) {
-        if (callback != null) callback.onFailed(message);
-    }
-
-    private void deliver(String text) {
-        loading = false;
-        if (service != null) {
-            try {
-                service.stop();
-            } catch (Exception ignored) {
-            }
-        }
-        if (callback != null) callback.onText(text == null ? "" : text);
-    }
-
-    private static String field(String json, String name) {
-        if (json == null) return null;
+    private void beginListening() {
         try {
-            JSONObject object = new JSONObject(json);
-            return object.optString(name, null);
-        } catch (Exception e) {
-            return null;
+            if (service != null) {
+                service.startListening(this);
+            }
+        } catch (Throwable t) {
+            fail(String.valueOf(t.getMessage()));
         }
     }
 
     @Override
     public void onPartialResult(String hypothesis) {
         String partial = field(hypothesis, "partial");
-        if (partial != null) last = partial;
+        if (partial == null || partial.isEmpty()) {
+            return;
+        }
+        last = partial;
+        Stream s = stream;
+        if (s != null) {
+            s.onPartial(partial);
+        }
     }
 
     @Override
     public void onResult(String hypothesis) {
         String text = field(hypothesis, "text");
-        if (text != null && !text.isEmpty()) last = text;
+        if (text != null && !text.isEmpty()) {
+            last = text;
+        }
     }
 
     @Override
     public void onFinalResult(String hypothesis) {
         String text = field(hypothesis, "text");
-        if (text == null || text.isEmpty()) text = last;
-        String out = text;
-        main.post(() -> deliver(out));
-    }
-
-    @Override
-    public void onError(Exception e) {
+        if (text == null || text.isEmpty()) {
+            text = last;
+        }
+        final String out = text == null ? "" : text;
+        Stream s = stream;
+        if (s != null) {
+            s.onFinal(out);
+            last = "";
+            if (running) {
+                main.post(this::resume);
+            }
+            return;
+        }
+        running = false;
+        stopService();
         main.post(() -> {
-            loading = false;
-            fail(e == null ? "erreur" : String.valueOf(e.getMessage()));
+            Callback cb = callback;
+            if (cb != null) {
+                cb.onText(out);
+            }
         });
     }
 
     @Override
+    public void onError(Exception e) {
+        fail(e == null ? "erreur" : String.valueOf(e.getMessage()));
+    }
+
+    @Override
     public void onTimeout() {
-        String out = last;
-        main.post(() -> deliver(out));
+        onFinalResult(null);
+    }
+
+    private void resume() {
+        try {
+            if (service != null && running) {
+                service.startListening(this);
+            }
+        } catch (Throwable ignored) {
+        }
+    }
+
+    private void fail(String message) {
+        running = false;
+        String msg = message == null ? "" : message;
+        stopService();
+        Stream s = stream;
+        Callback cb = callback;
+        main.post(() -> {
+            if (s != null) {
+                s.onFailed(msg);
+            } else if (cb != null) {
+                cb.onFailed(msg);
+            }
+        });
     }
 
     public void stop() {
-        loading = false;
-        if (service != null) {
-            try {
+        running = false;
+        stopService();
+    }
+
+    private void stopService() {
+        try {
+            if (service != null) {
                 service.stop();
-            } catch (Exception ignored) {
             }
+        } catch (Throwable ignored) {
         }
     }
 
     public void shutdown() {
-        stop();
-        if (service != null) {
-            try {
+        running = false;
+        stopService();
+        try {
+            if (service != null) {
                 service.shutdown();
-            } catch (Exception ignored) {
             }
-            service = null;
+        } catch (Throwable ignored) {
         }
-        if (recognizer != null) {
-            try {
+        service = null;
+        try {
+            if (recognizer != null) {
                 recognizer.close();
-            } catch (Exception ignored) {
             }
-            recognizer = null;
+        } catch (Throwable ignored) {
         }
-        if (model != null) {
-            try {
+        recognizer = null;
+        try {
+            if (model != null) {
                 model.close();
-            } catch (Exception ignored) {
             }
-            model = null;
+        } catch (Throwable ignored) {
         }
+        model = null;
+    }
+
+    private static String field(String json, String name) {
+        if (json == null || json.isEmpty()) {
+            return null;
+        }
+        try {
+            JSONObject object = new JSONObject(json);
+            if (object.has(name)) {
+                return object.getString(name).trim();
+            }
+        } catch (Exception ignored) {
+        }
+        return null;
     }
 }

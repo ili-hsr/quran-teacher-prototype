@@ -24,7 +24,9 @@ public class MainActivity extends BaseActivity {
         column.addView(Ui.subheading(this, getString(R.string.home_greeting)));
         column.addView(Ui.body(this, getString(R.string.app_tagline)));
 
-        column.addView(Ui.primaryButton(this, getString(R.string.btn_start_session),
+        column.addView(Ui.primaryButton(this, getString(R.string.btn_recite),
+                v -> openScreen(ReciteActivity.class)));
+        column.addView(Ui.button(this, getString(R.string.btn_start_session),
                 v -> openScreen(LessonActivity.class)));
         column.addView(Ui.button(this, getString(R.string.btn_choose_surah),
                 v -> openScreen(SurahListActivity.class)));

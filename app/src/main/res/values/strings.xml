@@ -199,4 +199,14 @@
     <string name="check_result_partial">C\'est proche. %1$d mots sur %2$d reconnus, il en manque.</string>
     <string name="check_result_none">Je n\'ai pas reconnu le verset. %1$d mots sur %2$d.</string>
     <string name="teacher_no_model">Le modèle de reconnaissance vocale n\'est pas installé.</string>
+    <string name="screen_recite">Récitation</string>
+    <string name="btn_recite">Réciter avec le professeur</string>
+    <string name="btn_restart_verse">Recommencer le verset</string>
+    <string name="recite_intro">Écoute le verset. Ensuite récite-le. Je t'arrête à la première erreur.</string>
+    <string name="recite_listening">Je t'écoute. Récite.</string>
+    <string name="recite_done">Bravo, le verset est complet.</string>
+    <string name="recite_resume">Écoute, puis reprends.</string>
+    <string name="recite_omission">Tu as sauté le mot numéro %1$d.</string>
+    <string name="recite_wrong">Erreur au mot numéro %1$d.</string>
+    <string name="recite_progress">Mot %1$d sur %2$d.</string>
 </resources>

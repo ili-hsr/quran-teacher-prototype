@@ -185,4 +185,14 @@
     <string name="check_result_partial">Close. %1$d of %2$d words recognised, some are missing.</string>
     <string name="check_result_none">I did not recognise the verse. %1$d words out of %2$d.</string>
     <string name="teacher_no_model">The speech recognition model is not installed.</string>
+    <string name="screen_recite">Recitation</string>
+    <string name="btn_recite">Recite with the teacher</string>
+    <string name="btn_restart_verse">Restart the verse</string>
+    <string name="recite_intro">Listen to the verse. Then recite it. I stop you at the first mistake.</string>
+    <string name="recite_listening">I am listening. Recite.</string>
+    <string name="recite_done">Well done, the verse is complete.</string>
+    <string name="recite_resume">Listen, then continue.</string>
+    <string name="recite_omission">You skipped word number %1$d.</string>
+    <string name="recite_wrong">Mistake at word number %1$d.</string>
+    <string name="recite_progress">Word %1$d of %2$d.</string>
 </resources>

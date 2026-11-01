@@ -1,5 +1,6 @@
 package org.example.quranteacher;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ public class LessonActivity extends BaseActivity {
 
     /** Index de sourate à ouvrir, transmis par la liste des sourates. */
     public static final String EXTRA_SURAH = "lesson_surah_index";
+    public static final String EXTRA_VERSE = "lesson_verse_index";
 
     private static final String K_SURAH = "lesson_surah";
     private static final String K_VERSE = "lesson_verse";
@@ -67,6 +69,8 @@ public class LessonActivity extends BaseActivity {
 
         column.addView(Ui.button(this, getString(R.string.btn_listen_verse),
                 v -> listen()));
+        column.addView(Ui.button(this, getString(R.string.btn_recite),
+                v -> openRecite()));
         column.addView(Ui.button(this, getString(R.string.btn_stop_audio),
                 v -> stopRecitation()));
         column.addView(Ui.primaryButton(this, getString(R.string.btn_next_verse),
@@ -112,6 +116,13 @@ public class LessonActivity extends BaseActivity {
         }
         verseIndex = target;
         render(true);
+    }
+
+    private void openRecite() {
+        Intent intent = new Intent(this, ReciteActivity.class);
+        intent.putExtra(EXTRA_SURAH, surahIndex);
+        intent.putExtra(EXTRA_VERSE, verseIndex);
+        startActivity(intent);
     }
 
     private void listen() {

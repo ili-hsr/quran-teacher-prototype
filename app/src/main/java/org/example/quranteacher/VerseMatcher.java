@@ -93,7 +93,7 @@ public final class VerseMatcher {
         return out.toString().trim();
     }
 
-    private static boolean similar(String a, String b) {
+    static boolean similar(String a, String b) {
         if (a.equals(b)) return true;
         int longest = Math.max(a.length(), b.length());
         if (longest <= 2) return false;

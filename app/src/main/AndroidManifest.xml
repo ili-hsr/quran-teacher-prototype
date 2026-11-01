@@ -35,6 +35,12 @@
             android:parentActivityName=".MainActivity" />
 
         <activity
+            android:name=".ReciteActivity"
+            android:exported="false"
+            android:label="@string/screen_recite"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
             android:name=".LessonActivity"
             android:exported="false"
             android:label="@string/screen_lessons"
