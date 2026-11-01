@@ -271,7 +271,7 @@ public class ReciteActivity extends BaseActivity {
     }
 
     @Override
-    protected void onSpecificCommand(String action) {
+    protected void onScreenCommand(String action) {
         if (CommandKeywords.NEXT.equals(action)) {
             nextVerse();
         } else if (CommandKeywords.PREV.equals(action)) {
@@ -284,7 +284,7 @@ public class ReciteActivity extends BaseActivity {
         } else if (CommandKeywords.STOP.equals(action)) {
             stopEverything();
         } else {
-            super.onSpecificCommand(action);
+            super.onScreenCommand(action);
         }
     }
 }
