@@ -71,7 +71,7 @@ public final class ModelManager {
     }
 
     public static File modelsRoot(Context context) {
-        File card = AudioInstaller.sdRoot(context);
+        File card = AudioInstaller.sdCard(context);
         File base = card != null ? new File(card, "QuranTeacher") : context.getExternalFilesDir(null);
         if (base == null) base = context.getFilesDir();
         File dir = new File(base, "models");
