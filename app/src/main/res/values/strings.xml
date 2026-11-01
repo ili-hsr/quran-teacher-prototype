@@ -182,4 +182,21 @@
     <string name="reciter_main">Dossier principal</string>
     <string name="reciter_none">Aucun récitateur détecté. Crée un dossier au nom du récitateur et place les fichiers dedans.</string>
     <string name="teacher_reciter_selected">Récitateur : %1$s.</string>
+    <string name="asr_section">Reconnaissance vocale hors ligne</string>
+    <string name="asr_install_fr">Télécharger le modèle français (40 Mo)</string>
+    <string name="asr_install_ar">Télécharger le modèle arabe (99 Mo)</string>
+    <string name="asr_install_en">Télécharger le modèle anglais (39 Mo)</string>
+    <string name="asr_help">Télécharge une seule fois en wifi. Le modèle va sur la carte mémoire et fonctionne ensuite sans Internet.</string>
+    <string name="asr_installed">installé</string>
+    <string name="asr_missing">absent</string>
+    <string name="asr_progress">Téléchargement : %1$d pour cent</string>
+    <string name="asr_downloading">Téléchargement du modèle. Garde l\'application ouverte et reste en wifi.</string>
+    <string name="asr_done">Modèle prêt.</string>
+    <string name="asr_failed">Le téléchargement a échoué. Réessaie en wifi.</string>
+    <string name="asr_listening">Je t\'écoute. Récite le verset.</string>
+    <string name="btn_check_recitation">Vérifier ma récitation</string>
+    <string name="check_result_ok">Bravo. %1$d mots sur %2$d reconnus.</string>
+    <string name="check_result_partial">C\'est proche. %1$d mots sur %2$d reconnus, il en manque.</string>
+    <string name="check_result_none">Je n\'ai pas reconnu le verset. %1$d mots sur %2$d.</string>
+    <string name="teacher_no_model">Le modèle de reconnaissance vocale n\'est pas installé.</string>
 </resources>

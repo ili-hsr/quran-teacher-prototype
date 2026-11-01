@@ -42,6 +42,7 @@ public abstract class BaseActivity extends Activity {
     protected ProgressStore progress;
     protected RecitationStore recitations;
     protected RecitationPlayer player;
+    private VoskAsr vosk;
 
     private SpeechRecognizer recognizer;
     private long learningStart = 0L;
@@ -172,6 +173,11 @@ public abstract class BaseActivity extends Activity {
         if (checkSelfPermission(Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, REQ_MIC);
+            return;
+        }
+        String tag = ModelManager.tagOf(AppPrefs.recogLang(this));
+        if (ModelManager.isInstalled(this, tag)) {
+            listenWithVosk(tag);
             return;
         }
         if (!SpeechRecognizer.isRecognitionAvailable(this)) {
@@ -406,6 +412,74 @@ public abstract class BaseActivity extends Activity {
         }
         say(R.string.audio_install_started);
         AudioInstaller.install(this, this::onAudioInstalled);
+    }
+
+
+    /** Une consigne, puis écoute du micro avec le moteur local. */
+    private void listenWithVosk(final String tag) {
+        say(R.string.teacher_listening);
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (teacher != null) teacher.stop();
+        if (vosk != null) vosk.stop();
+            if (vosk == null) vosk = new VoskAsr();
+            vosk.listen(this, tag, new VoskAsr.Callback() {
+                @Override
+                public void onText(String text) {
+                    String action = text == null ? null : CommandKeywords.match(BaseActivity.this, text);
+                    if (action == null) {
+                        say(R.string.teacher_not_understood);
+                    } else {
+                        onCommand(action);
+                    }
+                }
+
+                @Override
+                public void onFailed(String message) {
+                    say(R.string.teacher_mic_unavailable);
+                }
+            });
+        }, LISTEN_DELAY_MS);
+    }
+
+    /** Fait réciter le verset et compare ce qui est reconnu au texte. */
+    protected void listenAndCheck(final QuranData.Surah surah, final int verseIndex) {
+        if (surah == null || verseIndex < 0 || verseIndex >= surah.verseCount()) return;
+        final String tag = ModelManager.tagOf(AppPrefs.recogLang(this));
+        if (!ModelManager.isInstalled(this, tag)) {
+            say(R.string.teacher_no_model);
+            return;
+        }
+        say(R.string.asr_listening);
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (teacher != null) teacher.stop();
+        if (vosk != null) vosk.stop();
+            if (vosk == null) vosk = new VoskAsr();
+            vosk.listen(this, tag, new VoskAsr.Callback() {
+                @Override
+                public void onText(String text) {
+                    VerseMatcher.Score score =
+                            VerseMatcher.compare(surah.verses[verseIndex], text);
+                    if (score.strong()) {
+                        say(R.string.check_result_ok, score.matched, score.expected);
+                    } else if (score.accepted()) {
+                        say(R.string.check_result_partial, score.matched, score.expected);
+                    } else {
+                        say(R.string.check_result_none, score.matched, score.expected);
+                    }
+                    onRecitationChecked(surah, verseIndex, score);
+                }
+
+                @Override
+                public void onFailed(String message) {
+                    say(R.string.teacher_mic_unavailable);
+                }
+            });
+        }, LISTEN_DELAY_MS);
+    }
+
+    /** Point d'extension : l'écran décide quoi faire du résultat. */
+    protected void onRecitationChecked(QuranData.Surah surah, int verseIndex,
+                                       VerseMatcher.Score score) {
     }
 
     protected void onAudioInstalled(AudioInstaller.Result result) {

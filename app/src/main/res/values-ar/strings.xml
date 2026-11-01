@@ -168,4 +168,21 @@
     <string name="reciter_main">المجلد الرئيسي</string>
     <string name="reciter_none">لم يُعثر على قارئ. أنشئ مجلداً باسم القارئ وضع فيه الملفات.</string>
     <string name="teacher_reciter_selected">القارئ: %1$s.</string>
+    <string name="asr_section">التعرف الصوتي دون إنترنت</string>
+    <string name="asr_install_fr">تحميل النموذج الفرنسي (40 ميغابايت)</string>
+    <string name="asr_install_ar">تحميل النموذج العربي (99 ميغابايت)</string>
+    <string name="asr_install_en">تحميل النموذج الإنجليزي (39 ميغابايت)</string>
+    <string name="asr_help">حمّله مرة واحدة عبر الواي فاي. يُحفظ على بطاقة الذاكرة ويعمل بعد ذلك دون إنترنت.</string>
+    <string name="asr_installed">مثبّت</string>
+    <string name="asr_missing">غير موجود</string>
+    <string name="asr_progress">التحميل: %1$d بالمئة</string>
+    <string name="asr_downloading">جارٍ تحميل النموذج. أبقِ التطبيق مفتوحاً وابقَ على الواي فاي.</string>
+    <string name="asr_done">النموذج جاهز.</string>
+    <string name="asr_failed">فشل التحميل. أعد المحاولة على الواي فاي.</string>
+    <string name="asr_listening">أنا أسمعك. اقرئي الآية.</string>
+    <string name="btn_check_recitation">التحقق من تلاوتي</string>
+    <string name="check_result_ok">أحسنت. تم التعرف على %1$d كلمة من %2$d.</string>
+    <string name="check_result_partial">قريب. تم التعرف على %1$d من %2$d، وهناك كلمات ناقصة.</string>
+    <string name="check_result_none">لم أتعرف على الآية. %1$d كلمة من %2$d.</string>
+    <string name="teacher_no_model">نموذج التعرف الصوتي غير مثبّت.</string>
 </resources>

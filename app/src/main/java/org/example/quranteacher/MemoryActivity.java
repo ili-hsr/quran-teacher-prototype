@@ -62,7 +62,9 @@ public class MemoryActivity extends BaseActivity {
                 v -> listen()));
         column.addView(Ui.button(this, getString(R.string.btn_stop_audio),
                 v -> stopRecitation()));
-        toggleButton = Ui.primaryButton(this, getString(R.string.btn_show_verse), v -> toggle());
+        column.addView(Ui.primaryButton(this, getString(R.string.btn_check_recitation),
+                v -> listenAndCheck(QuranData.surah(surahIndex), verseIndex)));
+        toggleButton = Ui.button(this, getString(R.string.btn_show_verse), v -> toggle());
         column.addView(toggleButton);
         column.addView(Ui.button(this, getString(R.string.btn_recited), v -> markRecited()));
         column.addView(Ui.button(this, getString(R.string.btn_next_verse), v -> move(1)));
@@ -98,6 +100,17 @@ public class MemoryActivity extends BaseActivity {
         visible = !visible;
         render(false);
         say(visible ? R.string.teacher_verse_shown : R.string.teacher_verse_hidden);
+    }
+
+    @Override
+    protected void onRecitationChecked(QuranData.Surah surah, int verseIndex,
+                                       VerseMatcher.Score score) {
+        if (!score.accepted()) return;
+        String key = surah.verseKey(verseIndex);
+        progress.addRepetition(key);
+        progress.markReviewed(key);
+        if (score.strong()) progress.setLearned(key, true);
+        render(false);
     }
 
     private void markRecited() {

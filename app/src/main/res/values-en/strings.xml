@@ -168,4 +168,21 @@
     <string name="reciter_main">Main folder</string>
     <string name="reciter_none">No reciter found. Create a folder named after the reciter and put the files in it.</string>
     <string name="teacher_reciter_selected">Reciter: %1$s.</string>
+    <string name="asr_section">Offline speech recognition</string>
+    <string name="asr_install_fr">Download the French model (40 MB)</string>
+    <string name="asr_install_ar">Download the Arabic model (99 MB)</string>
+    <string name="asr_install_en">Download the English model (39 MB)</string>
+    <string name="asr_help">Download once on wifi. The model is stored on the SD card and then works without Internet.</string>
+    <string name="asr_installed">installed</string>
+    <string name="asr_missing">missing</string>
+    <string name="asr_progress">Download: %1$d percent</string>
+    <string name="asr_downloading">Downloading the model. Keep the app open and stay on wifi.</string>
+    <string name="asr_done">Model ready.</string>
+    <string name="asr_failed">The download failed. Try again on wifi.</string>
+    <string name="asr_listening">I am listening. Recite the verse.</string>
+    <string name="btn_check_recitation">Check my recitation</string>
+    <string name="check_result_ok">Well done. %1$d words recognised out of %2$d.</string>
+    <string name="check_result_partial">Close. %1$d of %2$d words recognised, some are missing.</string>
+    <string name="check_result_none">I did not recognise the verse. %1$d words out of %2$d.</string>
+    <string name="teacher_no_model">The speech recognition model is not installed.</string>
 </resources>

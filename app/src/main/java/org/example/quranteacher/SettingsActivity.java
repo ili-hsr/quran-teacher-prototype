@@ -14,6 +14,8 @@ import android.widget.LinearLayout;
  */
 public class SettingsActivity extends BaseActivity {
 
+    private android.widget.TextView asrStatus;
+
     private static final long RECREATE_DELAY_MS = 1200L;
 
     private static final String[] LANG_TAGS = {
@@ -85,6 +87,17 @@ public class SettingsActivity extends BaseActivity {
             }
         }
 
+        Ui.section(this, column, getString(R.string.asr_section));
+        asrStatus = Ui.meta(this, "");
+        column.addView(asrStatus);
+        column.addView(Ui.button(this, getString(R.string.asr_install_fr),
+                v -> downloadModel(ModelManager.FR)));
+        column.addView(Ui.button(this, getString(R.string.asr_install_ar),
+                v -> downloadModel(ModelManager.AR)));
+        column.addView(Ui.button(this, getString(R.string.asr_install_en),
+                v -> downloadModel(ModelManager.EN)));
+        column.addView(Ui.meta(this, getString(R.string.asr_help)));
+
         Ui.section(this, column, getString(R.string.audio_section));
         int count = recitations.availableCount();
         column.addView(Ui.body(this, getString(R.string.audio_folder_count, count)));
@@ -103,6 +116,47 @@ public class SettingsActivity extends BaseActivity {
 
         addNavigation(column);
         setScreen(column, teacherCtx.getString(R.string.teacher_settings_intro));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        refreshAsrStatus();
+    }
+
+    private void refreshAsrStatus() {
+        if (asrStatus == null) return;
+        StringBuilder builder = new StringBuilder();
+        for (ModelManager.ModelInfo info : ModelManager.MODELS) {
+            if (builder.length() > 0) builder.append('\n');
+            builder.append(info.tag.toUpperCase(java.util.Locale.US)).append(" : ");
+            builder.append(ModelManager.isInstalled(this, info.tag)
+                    ? getString(R.string.asr_installed)
+                    : getString(R.string.asr_missing));
+        }
+        asrStatus.setText(builder.toString());
+    }
+
+    private void downloadModel(ModelManager.ModelInfo info) {
+        if (ModelManager.isInstalled(this, info.tag)) {
+            say(R.string.asr_done);
+            return;
+        }
+        say(R.string.asr_downloading);
+        ModelManager.download(this, info.tag, new ModelManager.Listener() {
+            @Override
+            public void onProgress(int percent) {
+                if (asrStatus != null) {
+                    asrStatus.setText(getString(R.string.asr_progress, percent));
+                }
+            }
+
+            @Override
+            public void onFinished(boolean ok, String path, String error) {
+                say(ok ? R.string.asr_done : R.string.asr_failed);
+                refreshAsrStatus();
+            }
+        });
     }
 
     private void addOption(LinearLayout column, String label, boolean current, Runnable action) {
