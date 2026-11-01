@@ -202,8 +202,8 @@
     <string name="screen_recite">Récitation</string>
     <string name="btn_recite">Réciter avec le professeur</string>
     <string name="btn_restart_verse">Recommencer le verset</string>
-    <string name="recite_intro">Écoute le verset. Ensuite récite-le. Je t'arrête à la première erreur.</string>
-    <string name="recite_listening">Je t'écoute. Récite.</string>
+    <string name="recite_intro">Écoute le verset. Ensuite récite-le. Je t\'arrête à la première erreur.</string>
+    <string name="recite_listening">Je t\'écoute. Récite.</string>
     <string name="recite_done">Bravo, le verset est complet.</string>
     <string name="recite_resume">Écoute, puis reprends.</string>
     <string name="recite_omission">Tu as sauté le mot numéro %1$d.</string>
